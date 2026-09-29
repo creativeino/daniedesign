@@ -89,7 +89,6 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
   // errors surface via the shared `error` banner above the fields.
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    e.target.value = "";
     if (!file) return;
 
     setUploadingCover(true);
@@ -104,11 +103,10 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
     }
   };
 
-  // Upload the selected gallery files one by one and append their returned URLs
-  // to the existing gallery array; files that fail are reported and skipped.
+  // Batch-upload the selected gallery files and append their returned URLs
+  // to the existing gallery array (each upload succeeds or the whole batch errors).
   const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    e.target.value = "";
     if (!files || files.length === 0) return;
 
     setUploadingGallery(true);
@@ -120,9 +118,6 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
         ...prev,
         gallery: [...(prev.gallery || []), ...urls],
       }));
-      if (uploaded.length < files.length) {
-        setError(`${files.length - uploaded.length} of ${files.length} file(s) failed to upload and were skipped.`);
-      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to upload gallery images");
     } finally {

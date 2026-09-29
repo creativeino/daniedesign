@@ -12,7 +12,6 @@ import { blogPosts as fallbackBlogPosts, BlogPost } from "@/data/blog";
 import { services as fallbackServices, Service } from "@/data/services";
 import { creativeItems as fallbackCreative, CreativeItem } from "@/data/creative";
 import { clients as fallbackClients } from "@/data/clients";
-import { prepareUploadFile } from "@/lib/media";
 
 /** Root URL of the backend API, overridable via NEXT_PUBLIC_API_URL. */
 export const API_BASE_URL =
@@ -674,7 +673,31 @@ export async function deleteInquiry(id: number) {
 // -------------------------------------------------------------
 // Image / Media Upload API
 // -------------------------------------------------------------
-/** One file returned by a successful upload. */
+/**
+ * Upload a single image to the backend's media storage.
+ *
+ * @param file Image file selected by the admin.
+ * @returns The stored `filename` and its public `url`.
+ * @throws Error with the backend's `detail` message on failure.
+ */
+export async function uploadImage(file: File): Promise<{ filename: string; url: string }> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`${API_BASE_URL}/upload/image`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || "Failed to upload image");
+  }
+
+  return await res.json();
+}
+
+/** One file returned by a successful batch upload. */
 export type UploadedMediaItem = {
   filename: string;
   url: string;
@@ -683,82 +706,30 @@ export type UploadedMediaItem = {
 };
 
 /**
- * Turn a failed upload response into a readable message.
+ * Upload several images at once (used by multi-image admin forms).
  *
- * Vercel's request-body rejection returns plain text (not JSON), so the
- * usual `detail` extraction would degrade to a generic "upload failed".
- */
-async function uploadError(res: Response, fallback: string): Promise<string> {
-  const text = await res.text().catch(() => "");
-  try {
-    const parsed = JSON.parse(text) as { detail?: string };
-    if (typeof parsed?.detail === "string" && parsed.detail) return parsed.detail;
-  } catch {
-    // not JSON — fall through to the status-specific message below
-  }
-  if (res.status === 413) {
-    return "File is too large for the server (≈4MB per request). The image was resized automatically — try a smaller image if this keeps failing.";
-  }
-  return `${fallback} (HTTP ${res.status})`;
-}
-
-/**
- * Upload a single image to the backend's media storage.
- *
- * Oversized files are downscaled/re-encoded first (see `prepareUploadFile`) so
- * the request fits under the platform's body limit.
- *
- * @param file Image file selected by the admin.
- * @returns The stored `filename`, public `url`, `content_type` and `size`.
+ * @param files File list or array of image files to upload.
+ * @returns The uploaded records (`filename` and `url`); empty if none succeeded.
  * @throws Error with the backend's `detail` message on failure.
  */
-export async function uploadImage(file: File): Promise<UploadedMediaItem> {
-  const payload = await prepareUploadFile(file);
+export async function uploadMultipleImages(files: FileList | File[]): Promise<UploadedMediaItem[]> {
   const formData = new FormData();
-  formData.append("file", payload, payload.name);
+  for (let i = 0; i < files.length; i++) {
+    formData.append("files", files[i]);
+  }
 
-  const res = await fetch(`${API_BASE_URL}/upload/image`, {
+  const res = await fetch(`${API_BASE_URL}/upload/multiple`, {
     method: "POST",
     body: formData,
   });
 
   if (!res.ok) {
-    throw new Error(await uploadError(res, "Failed to upload image"));
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.detail || "Failed to upload images");
   }
 
-  const data = (await res.json()) as Partial<UploadedMediaItem>;
-  return {
-    filename: data.filename ?? payload.name,
-    url: data.url ?? "",
-    content_type: data.content_type ?? payload.type,
-    size: data.size ?? payload.size,
-  };
-}
-
-/**
- * Upload several images (used by multi-image admin forms).
- *
- * Files are sent one request at a time: a single batch body would blow past the
- * platform's per-request size limit even when each file alone is fine.
- *
- * @param files File list or array of image files to upload.
- * @returns The uploaded records (`filename` and `url`); empty if none succeeded.
- * @throws Error with the backend's `detail` message when every file failed.
- */
-export async function uploadMultipleImages(files: FileList | File[]): Promise<UploadedMediaItem[]> {
-  const uploaded: UploadedMediaItem[] = [];
-  let lastError: Error | null = null;
-
-  for (const file of Array.from(files)) {
-    try {
-      uploaded.push(await uploadImage(file));
-    } catch (err) {
-      lastError = err instanceof Error ? err : new Error("Failed to upload image");
-    }
-  }
-
-  if (uploaded.length === 0 && lastError) throw lastError;
-  return uploaded;
+  const data = await res.json();
+  return data.uploaded || [];
 }
 
 /** A file already stored on the server, listed by the media library. */

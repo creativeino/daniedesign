@@ -35,8 +35,6 @@ export default function AdminGalleryPage() {
   // from the response (upload alone doesn't create a gallery entry).
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    // clear the input so picking the same file again re-fires onChange
-    e.target.value = "";
     if (!file) return;
     setUploading(true);
     try {
@@ -123,26 +121,14 @@ export default function AdminGalleryPage() {
                   required
                   value={src}
                   onChange={(e) => setSrc(e.target.value)}
-                  placeholder={uploading ? "Uploading…" : "Image URL"}
+                  placeholder="Image URL"
                   className="flex-1"
                 />
                 <label className="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-accent cursor-pointer hover:border-accent">
-                  {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={uploading}
-                    className="hidden"
-                  />
+                  <UploadCloud className="h-4 w-4" />
+                  <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                 </label>
               </div>
-              {/* live preview so it's obvious the upload worked before submitting */}
-              {src && (
-                <div className="relative mt-2 h-16 w-24 overflow-hidden rounded-md border border-white/10 bg-black/40">
-                  <MediaImage src={src} alt="Selected photo preview" fill className="object-cover" />
-                </div>
-              )}
             </div>
 
             <div>
@@ -152,7 +138,7 @@ export default function AdminGalleryPage() {
                 size="sm"
                 className="w-full font-semibold"
               >
-                {uploading ? "Uploading..." : adding ? "Adding..." : "+ Add Photo"}
+                {adding ? "Adding..." : "+ Add Photo"}
               </Button>
             </div>
           </form>
