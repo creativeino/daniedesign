@@ -673,31 +673,7 @@ export async function deleteInquiry(id: number) {
 // -------------------------------------------------------------
 // Image / Media Upload API
 // -------------------------------------------------------------
-/**
- * Upload a single image to the backend's media storage.
- *
- * @param file Image file selected by the admin.
- * @returns The stored `filename` and its public `url`.
- * @throws Error with the backend's `detail` message on failure.
- */
-export async function uploadImage(file: File): Promise<{ filename: string; url: string }> {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const res = await fetch(`${API_BASE_URL}/upload/image`, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.detail || "Failed to upload image");
-  }
-
-  return await res.json();
-}
-
-/** One file returned by a successful batch upload. */
+/** One file returned by a successful upload. */
 export type UploadedMediaItem = {
   filename: string;
   url: string;
@@ -706,30 +682,139 @@ export type UploadedMediaItem = {
 };
 
 /**
- * Upload several images at once (used by multi-image admin forms).
- *
- * @param files File list or array of image files to upload.
- * @returns The uploaded records (`filename` and `url`); empty if none succeeded.
- * @throws Error with the backend's `detail` message on failure.
+ * Route that exchanges an admin JWT for a scoped Vercel Blob client-upload
+ * token (see `app/api/blob/route.ts`).
  */
-export async function uploadMultipleImages(files: FileList | File[]): Promise<UploadedMediaItem[]> {
-  const formData = new FormData();
-  for (let i = 0; i < files.length; i++) {
-    formData.append("files", files[i]);
-  }
+const BLOB_UPLOAD_ROUTE = "/api/blob";
 
-  const res = await fetch(`${API_BASE_URL}/upload/multiple`, {
+/**
+ * The Blob store is private, so raw blob URLs are not browsable. Media is
+ * saved through the public streaming route instead (see
+ * `app/api/blob/file/route.ts`), which keeps the URL portable between
+ * localhost and production.
+ */
+const blobFileUrl = (pathname: string) => `/api/blob/file?p=${encodeURIComponent(pathname)}`;
+
+/**
+ * Vercel Functions reject any request body above ~4.5MB, so the backend
+ * fallback only works for files comfortably below that ceiling.
+ */
+const BACKEND_SAFE_BYTES = 3.5 * 1024 * 1024;
+
+const formatMb = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(1)}MB`;
+
+/**
+ * Upload straight from the browser to Vercel Blob.
+ *
+ * Only a tiny token request hits the server — the file bytes go directly to
+ * storage, so Vercel's 4.5MB function limit doesn't apply (videos included).
+ */
+async function uploadToBlob(file: File): Promise<UploadedMediaItem> {
+  const { upload } = await import("@vercel/blob/client");
+  const token = getAdminToken();
+  const blob = await upload(file.name, file, {
+    access: "private",
+    handleUploadUrl: BLOB_UPLOAD_ROUTE,
+    ...(token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+  });
+  return {
+    filename: blob.pathname,
+    url: blobFileUrl(blob.pathname),
+    content_type: blob.contentType || file.type,
+    size: file.size,
+  };
+}
+
+/** Legacy path: file → FastAPI → DB storage (≈4.5MB ceiling on Vercel). */
+async function uploadToBackend(file: File): Promise<UploadedMediaItem> {
+  const formData = new FormData();
+  formData.append("file", file, file.name);
+
+  const res = await fetch(`${API_BASE_URL}/upload/image`, {
     method: "POST",
     body: formData,
   });
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.detail || "Failed to upload images");
+    throw new Error(errorData.detail || `Failed to upload image (HTTP ${res.status})`);
   }
 
-  const data = await res.json();
-  return data.uploaded || [];
+  const data = (await res.json()) as Partial<UploadedMediaItem>;
+  return {
+    filename: data.filename ?? file.name,
+    url: data.url ?? "",
+    content_type: data.content_type ?? file.type,
+    size: data.size ?? file.size,
+  };
+}
+
+/**
+ * Upload a single media file (image or video).
+ *
+ * Small files go to the backend first so they keep landing in the media
+ * library (`stored_files`); the Vercel Blob client upload handles anything
+ * above the platform's request-body limit — plus small files as a fallback
+ * when the backend rejects them.
+ *
+ * @param file Media file selected by the admin.
+ * @returns The stored `filename`, public `url`, `content_type` and `size`.
+ * @throws Error explaining why the upload couldn't be stored anywhere.
+ */
+export async function uploadImage(file: File): Promise<UploadedMediaItem> {
+  const describe = (err: unknown) => (err instanceof Error ? err.message : "upload failed");
+  const blobTooLarge = () =>
+    new Error(
+      `this ${formatMb(file.size)} file needs Vercel Blob storage ` +
+        `(set BLOB_READ_WRITE_TOKEN for this project). The backend caps uploads at ≈4.5MB.`
+    );
+
+  if (file.size <= BACKEND_SAFE_BYTES) {
+    let backendFailure: string;
+    try {
+      return await uploadToBackend(file);
+    } catch (err) {
+      backendFailure = describe(err);
+    }
+    try {
+      return await uploadToBlob(file);
+    } catch (err) {
+      throw new Error(`${backendFailure} — Blob fallback failed too: ${describe(err)}`);
+    }
+  }
+
+  try {
+    return await uploadToBlob(file);
+  } catch (err) {
+    throw new Error(`${describe(err)} — ${blobTooLarge().message}`);
+  }
+}
+
+/**
+ * Upload several media files (used by multi-image admin forms and the
+ * media library).
+ *
+ * Files go up one at a time: a single batched multipart body would blow past
+ * the platform's per-request size limit even when each file alone is fine.
+ *
+ * @param files File list or array of files to upload.
+ * @returns The uploaded records; empty if none succeeded.
+ * @throws Error with the backend's `detail` message when every file failed.
+ */
+export async function uploadMultipleImages(files: FileList | File[]): Promise<UploadedMediaItem[]> {
+  const uploaded: UploadedMediaItem[] = [];
+  let lastError: Error | null = null;
+
+  for (const file of Array.from(files)) {
+    try {
+      uploaded.push(await uploadImage(file));
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error("Failed to upload file");
+    }
+  }
+
+  if (uploaded.length === 0 && lastError) throw lastError;
+  return uploaded;
 }
 
 /** A file already stored on the server, listed by the media library. */

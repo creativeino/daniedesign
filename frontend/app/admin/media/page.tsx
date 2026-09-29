@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 // MAX_VIDEO_UPLOAD_SIZE_MB) so oversized files fail fast instead of after
 // the whole upload has been sent.
 const MAX_IMAGE_MB = 25;
-const MAX_VIDEO_MB = 150;
+const MAX_VIDEO_MB = 160;
 const VIDEO_EXTS = [".mp4", ".webm"];
 
 const formatSize = (bytes: number) =>

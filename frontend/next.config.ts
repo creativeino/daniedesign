@@ -24,6 +24,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.vercel.app",
       },
+      // Vercel Blob store — where new admin uploads (images + videos) are kept.
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
       {
         protocol: "http",
         hostname: "localhost",
