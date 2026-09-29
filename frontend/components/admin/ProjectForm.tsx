@@ -18,7 +18,7 @@ import {
   Star,
 } from "lucide-react";
 import { createProject, updateProject, uploadImage, uploadMultipleImages } from "@/lib/api";
-import MediaLibraryPicker from "@/components/admin/MediaLibraryPicker";
+import { isVideoUrl } from "@/lib/utils";
 import { Project } from "@/data/projects";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -52,8 +52,6 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
   const [newTag, setNewTag] = useState("");
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
-  // Which field the media-library picker is currently choosing for (null = closed).
-  const [pickerFor, setPickerFor] = useState<"cover" | "gallery" | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -131,19 +129,6 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
       ...prev,
       gallery: prev.gallery?.filter((_, i) => i !== index),
     }));
-  };
-
-  // Media-library selection: cover takes one URL, gallery appends the batch.
-  const resolvePublicUrl = (url: string) =>
-    url.startsWith("http") ? url : `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}${url}`;
-
-  const handlePickerSelect = (urls: string[]) => {
-    if (pickerFor === "cover") {
-      setForm((prev) => ({ ...prev, image: resolvePublicUrl(urls[0]) }));
-    } else if (pickerFor === "gallery") {
-      setForm((prev) => ({ ...prev, gallery: [...(prev.gallery || []), ...urls.map(resolvePublicUrl)] }));
-    }
-    setPickerFor(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -387,15 +372,6 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
                   onChange={(e) => setForm({ ...form, image: e.target.value })}
                   placeholder="Or paste direct image URL"
                 />
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  className="w-full text-xs"
-                  onClick={() => setPickerFor("cover")}
-                >
-                  <ImageIcon className="mr-1.5 h-3.5 w-3.5" /> Pick from Media Library
-                </Button>
                 {form.image && (
                   <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden border border-white/10 bg-black/40">
                     <Image src={form.image} alt="Cover Preview" fill className="object-cover" />
@@ -408,34 +384,24 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
           {/* Gallery Multi-Photos */}
           <div className="border-t border-white/5 pt-4">
             <label className="block text-[11px] font-mono text-white/60 mb-1.5 uppercase">
-              Gallery Screenshots ({form.gallery?.length || 0})
+              Gallery Screenshots &amp; Videos ({form.gallery?.length || 0})
             </label>
 
             <div className="relative border border-dashed border-white/20 rounded-xl p-5 text-center hover:border-accent transition-colors bg-[#161619]/40 mb-3">
               <input
                 type="file"
                 multiple
-                accept="image/*"
+                accept="image/*,video/mp4,video/webm"
                 onChange={handleGalleryUpload}
                 disabled={uploadingGallery}
                 className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
               />
               <ImageIcon className="mx-auto h-6 w-6 text-accent mb-1.5" />
               <p className="text-xs font-semibold text-white">
-                {uploadingGallery ? "Uploading Gallery..." : "Upload Multiple Gallery Photos"}
+                {uploadingGallery ? "Uploading Gallery..." : "Upload Multiple Photos or Videos"}
               </p>
-              <p className="text-[10px] font-mono text-white/40 mt-0.5">Select multiple images at once</p>
+              <p className="text-[10px] font-mono text-white/40 mt-0.5">Images (JPG, PNG, WEBP) and MP4 / WEBM videos</p>
             </div>
-
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              className="w-full text-xs"
-              onClick={() => setPickerFor("gallery")}
-            >
-              <ImageIcon className="mr-1.5 h-3.5 w-3.5" /> Pick from Media Library
-            </Button>
 
             {form.gallery && form.gallery.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -444,7 +410,14 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
                     key={idx}
                     className="group relative aspect-[4/3] rounded-lg overflow-hidden border border-white/10 bg-black/40"
                   >
-                    <Image src={url} alt={`Gallery ${idx + 1}`} fill className="object-cover" />
+                    {isVideoUrl(url) ? (
+                      <video src={url} muted playsInline preload="metadata" className="h-full w-full object-cover" />
+                    ) : (
+                      <Image src={url} alt={`Gallery ${idx + 1}`} fill className="object-cover" />
+                    )}
+                    <span className="absolute left-1.5 bottom-1.5 rounded bg-black/60 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-white/80">
+                      {isVideoUrl(url) ? "Video" : "Image"}
+                    </span>
                     <button
                       type="button"
                       onClick={() => handleRemoveGalleryImage(idx)}
@@ -526,20 +499,6 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
           )}
         </Button>
       </div>
-
-      {/* Media library modal: opened from the cover/gallery "Pick from Media Library" buttons */}
-      <MediaLibraryPicker
-        open={pickerFor !== null}
-        onClose={() => setPickerFor(null)}
-        onSelect={handlePickerSelect}
-        multiple={pickerFor === "gallery"}
-        kind="image"
-        title={
-          pickerFor === "gallery"
-            ? "Pick Gallery Images"
-            : "Pick Cover Image"
-        }
-      />
     </form>
   );
 }

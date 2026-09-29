@@ -738,10 +738,10 @@ export type MediaFileItem = {
  * List previously uploaded media files (newest first) so admin forms can
  * pick from the server library instead of re-uploading.
  *
- * @param kind Optional filter: "image" (default) or "all".
+ * @param kind Optional filter: "all" (default), "image" or "video".
  * @returns The stored files; empty array if the backend is unreachable.
  */
-export async function listMedia(kind: "all" | "image" = "all"): Promise<MediaFileItem[]> {
+export async function listMedia(kind: "all" | "image" | "video" = "all"): Promise<MediaFileItem[]> {
   const res = await fetch(`${API_BASE_URL}/upload/media?kind=${kind}`, { cache: "no-store" });
 
   if (!res.ok) {

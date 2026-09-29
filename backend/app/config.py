@@ -37,6 +37,7 @@ class Settings(BaseSettings):
 
     # Uploads (files live in the DB now).
     MAX_UPLOAD_SIZE_MB: int = 25
+    MAX_VIDEO_UPLOAD_SIZE_MB: int = 150
 
     # Admin CRM — creds must come from the environment
     ADMIN_EMAIL: str = ""

@@ -14,8 +14,19 @@ from app.schemas.stat import UploadResponse, MultipleUploadResponse, MediaFileIt
 
 router = APIRouter(prefix="/upload", tags=["Uploads & Media"])
 
-# extension allowlist used to reject anything that is not an image format
-ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif"}
+# extension allowlist used to reject anything that is not an accepted media format
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif"}
+VIDEO_EXTENSIONS = {".mp4", ".webm"}
+ALLOWED_EXTENSIONS = IMAGE_EXTENSIONS | VIDEO_EXTENSIONS
+
+
+def max_upload_size_mb(ext: str) -> int:
+    """Per-type upload limit in MB: videos get the larger allowance."""
+    return (
+        settings.MAX_VIDEO_UPLOAD_SIZE_MB
+        if ext in VIDEO_EXTENSIONS
+        else settings.MAX_UPLOAD_SIZE_MB
+    )
 
 def get_file_url(request: Request, filename: str) -> str:
     """Build the publicly reachable URL for a stored file from the current
@@ -43,11 +54,12 @@ def upload_single_image(request: Request, file: UploadFile = File(...)):
     file_size = len(contents)
 
     # enforce the size limit after reading (UploadFile has no reliable pre-size)
-    max_bytes = settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024
+    limit_mb = max_upload_size_mb(ext)
+    max_bytes = limit_mb * 1024 * 1024
     if file_size > max_bytes:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"File exceeds maximum allowed size of {settings.MAX_UPLOAD_SIZE_MB}MB"
+            detail=f"File exceeds maximum allowed size of {limit_mb}MB"
         )
 
     try:
@@ -85,7 +97,7 @@ def upload_multiple_images(request: Request, files: List[UploadFile] = File(...)
         try:
             contents = file.file.read()
             file_size = len(contents)
-            max_bytes = settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024
+            max_bytes = max_upload_size_mb(ext) * 1024 * 1024
             if file_size > max_bytes:
                 continue
             unique_filename = storage.save_file(contents, ext, file.content_type)
@@ -103,12 +115,12 @@ def upload_multiple_images(request: Request, files: List[UploadFile] = File(...)
 @router.get("/media", response_model=MediaListResponse, summary="List previously uploaded media files")
 def list_media(
     request: Request,
-    kind: str = Query("all", pattern="^(all|image)$"),
+    kind: str = Query("all", pattern="^(all|image|video)$"),
     limit: int = Query(200, ge=1, le=1000),
 ):
     """GET /upload/media — returns files already stored in the database,
     newest first, so admin forms can pick from the library instead of
-    re-uploading. `kind=image` filters to still images."""
+    re-uploading. `kind=image` / `kind=video` filter to one media type."""
     rows, total = storage.list_files(kind=kind, limit=limit)
     items = [
         MediaFileItem(

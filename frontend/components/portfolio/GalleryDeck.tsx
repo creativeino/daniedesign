@@ -3,8 +3,9 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "@/lib/gsap";
+import { isVideoUrl } from "@/lib/utils";
 import RollNumber from "@/components/animations/RollNumber";
-import { X, ArrowLeft, ArrowRight, ZoomIn } from "lucide-react";
+import { X, ArrowLeft, ArrowRight, ZoomIn, Play } from "lucide-react";
 
 type GalleryDeckProps = {
   images: string[];
@@ -72,12 +73,12 @@ export default function GalleryDeck({ images, title }: GalleryDeckProps) {
     };
   }, [lightboxIndex, images.length, nextImage, prevImage, goTo]);
 
-  // Prefetch adjacent images so next/prev feels instant.
+  // Prefetch adjacent images so next/prev feels instant (videos stream on demand).
   useEffect(() => {
     if (lightboxIndex === null) return;
     [1, -1].forEach((delta) => {
       const src = images[(lightboxIndex + delta + images.length) % images.length];
-      if (src) {
+      if (src && !isVideoUrl(src)) {
         const img = new window.Image();
         img.src = src;
       }
@@ -177,17 +178,28 @@ export default function GalleryDeck({ images, title }: GalleryDeckProps) {
                 onClick={() => openLightbox(i)}
                 className="group relative aspect-[4/5] w-[78vw] shrink-0 snap-center overflow-hidden rounded-2xl border border-ink/10 transition-all duration-500 hover:border-accent/30 cursor-pointer sm:w-[56vw] md:w-[42vw] lg:aspect-[3/4] lg:w-[34vw] lg:max-w-[520px]"
               >
-                <Image
-                  src={image}
-                  alt={`${title} — gallery image ${i + 1}`}
-                  fill
-                  sizes="(min-width: 1024px) 34vw, 78vw"
-                  className="object-cover grayscale contrast-[1.15] brightness-[0.8] transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.05] group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100"
-                />
+                {isVideoUrl(image) ? (
+                  <video
+                    src={image}
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    className="h-full w-full object-cover grayscale contrast-[1.15] brightness-[0.8] transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.05] group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100"
+                  />
+                ) : (
+                  <Image
+                    src={image}
+                    alt={`${title} — gallery image ${i + 1}`}
+                    fill
+                    sizes="(min-width: 1024px) 34vw, 78vw"
+                    className="object-cover grayscale contrast-[1.15] brightness-[0.8] transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.05] group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100"
+                  />
+                )}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90 transition-opacity duration-500 group-hover:opacity-60" />
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                   <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md">
-                    <ZoomIn className="h-5 w-5" />
+                    {isVideoUrl(image) ? <Play className="h-5 w-5" /> : <ZoomIn className="h-5 w-5" />}
                   </span>
                 </div>
                 <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5 md:p-6">
@@ -292,16 +304,27 @@ export default function GalleryDeck({ images, title }: GalleryDeckProps) {
             {/* Subtle border glow */}
             <div className="pointer-events-none absolute -inset-px rounded-lg bg-gradient-to-b from-white/10 via-transparent to-white/5 z-[1]" aria-hidden="true" />
 
-            {/* Image */}
+            {/* Image / Video */}
             <div className="relative h-full w-full overflow-hidden rounded-lg">
-              <Image
-                src={images[lightboxIndex]}
-                alt={`${title} — gallery image ${lightboxIndex + 1}`}
-                fill
-                sizes="92vw"
-                className="object-contain"
-                priority
-              />
+              {isVideoUrl(images[lightboxIndex]) ? (
+                <video
+                  key={`video-${lightboxIndex}`}
+                  src={images[lightboxIndex]}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="h-full w-full bg-black object-contain"
+                />
+              ) : (
+                <Image
+                  src={images[lightboxIndex]}
+                  alt={`${title} — gallery image ${lightboxIndex + 1}`}
+                  fill
+                  sizes="92vw"
+                  className="object-contain"
+                  priority
+                />
+              )}
               {/* Sheen sweep after the image settles */}
               <span
                 key={`sheen-${lightboxIndex}`}

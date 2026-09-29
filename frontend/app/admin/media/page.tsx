@@ -17,6 +17,23 @@ import { uploadMultipleImages } from "@/lib/api";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+// Client-side limits — must match backend config (MAX_UPLOAD_SIZE_MB /
+// MAX_VIDEO_UPLOAD_SIZE_MB) so oversized files fail fast instead of after
+// the whole upload has been sent.
+const MAX_IMAGE_MB = 25;
+const MAX_VIDEO_MB = 150;
+const VIDEO_EXTS = [".mp4", ".webm"];
+
+const formatSize = (bytes: number) =>
+  bytes >= 1024 * 1024
+    ? `${(bytes / 1024 / 1024).toFixed(1)} MB`
+    : `${(bytes / 1024).toFixed(1)} KB`;
+
+const isVideo = (nameOrType: string) => {
+  const value = nameOrType.toLowerCase();
+  return value.startsWith("video/") || VIDEO_EXTS.some((ext) => value.endsWith(ext));
+};
+
 export default function AdminMediaPage() {
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -27,6 +44,16 @@ export default function AdminMediaPage() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
+    // Reject oversize files before uploading anything.
+    for (const file of Array.from(files)) {
+      const limitMb = isVideo(file.name) ? MAX_VIDEO_MB : MAX_IMAGE_MB;
+      if (file.size > limitMb * 1024 * 1024) {
+        alert(`"${file.name}" is ${(file.size / 1024 / 1024).toFixed(1)} MB — max ${limitMb}MB for ${isVideo(file.name) ? "videos" : "images"}.`);
+        e.target.value = "";
+        return;
+      }
+    }
+
     setUploading(true);
     try {
       const results = await uploadMultipleImages(files);
@@ -35,6 +62,7 @@ export default function AdminMediaPage() {
       alert(err.message || "Failed to upload files");
     } finally {
       setUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -77,7 +105,7 @@ export default function AdminMediaPage() {
             {uploading ? "Uploading Assets to Server..." : "Click or Drag Files Here to Upload"}
           </h3>
           <p className="text-xs text-white/40 leading-relaxed font-mono">
-            Images up to 25MB; MP4 and WEBM videos up to 180MB per file.
+            Images up to {MAX_IMAGE_MB}MB; MP4 and WEBM videos up to {MAX_VIDEO_MB}MB per file.
           </p>
         </div>
       </div>
@@ -92,7 +120,7 @@ export default function AdminMediaPage() {
           <Card className="p-10 text-center">
             <FileImage className="mx-auto h-7 w-7 text-white/20 mb-2" />
             <p className="text-xs font-semibold text-white">No files uploaded in this session</p>
-            <p className="text-[11px] text-white/40 mt-0.5">Use the box above to upload new images.</p>
+            <p className="text-[11px] text-white/40 mt-0.5">Use the box above to upload new images or videos.</p>
           </Card>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -102,7 +130,16 @@ export default function AdminMediaPage() {
                 className="p-3 hover:border-accent/40 transition-all space-y-2.5"
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-black/40 border border-white/5">
-                  <Image src={file.url} alt={file.filename} fill className="object-cover" />
+                  {isVideo(file.content_type) ? (
+                    <video
+                      src={file.url}
+                      className="h-full w-full object-cover"
+                      controls
+                      preload="metadata"
+                    />
+                  ) : (
+                    <Image src={file.url} alt={file.filename} fill className="object-cover" />
+                  )}
                 </div>
 
                 <div className="space-y-0.5">
@@ -110,7 +147,7 @@ export default function AdminMediaPage() {
                     {file.filename}
                   </p>
                   <p className="font-mono text-[10px] text-white/40">
-                    {(file.size / 1024).toFixed(1)} KB • {file.content_type}
+                    {formatSize(file.size)} • {file.content_type}
                   </p>
                 </div>
 
