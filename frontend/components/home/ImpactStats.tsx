@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { stats, impactStory } from "@/data/stats";
+import { stats } from "@/data/stats";
 import Counter from "@/components/animations/Counter";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "@/lib/gsap";
 

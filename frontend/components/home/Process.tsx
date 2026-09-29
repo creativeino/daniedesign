@@ -652,6 +652,7 @@ export default function Process({
     : currentProcess.steps.right;
 
   // Entrance animation on first mount (re-runs when the visible card set changes)
+  const cardSetKey = singleMode ? steps : activeTab;
   useEffect(() => {
     const cards = cardsRef.current;
     if (!cards || prefersReducedMotion()) return;
@@ -673,7 +674,7 @@ export default function Process({
     }, cards);
 
     return () => ctx.revert();
-  }, [singleMode ? steps : activeTab]);
+  }, [cardSetKey]);
 
   // Tab switch handler with GSAP transition
   const handleTabSwitch = (id: string) => {

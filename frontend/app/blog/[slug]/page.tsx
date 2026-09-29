@@ -2,10 +2,10 @@
 // build time (one page per slug via generateStaticParams) and fully sourced
 // from the static @/data/blog file — no API fetch.
 import type { Metadata } from "next";
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowUpRight, Clock, Tag, Share2, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Clock, CheckCircle2 } from "lucide-react";
 import { blogPosts, getPost } from "@/data/blog";
 import Button from "@/components/shared/Button";
 
@@ -84,7 +84,7 @@ export default async function BlogPostPage({ params }: Props) {
 
           {/* Hero Featured Image */}
           <div className="relative mt-12 aspect-[16/9] w-full overflow-hidden rounded-3xl border border-white/10 bg-card md:aspect-[21/9]">
-            <Image
+            <MediaImage
               src={post.image}
               alt={post.title}
               fill

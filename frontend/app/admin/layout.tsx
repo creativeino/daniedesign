@@ -3,7 +3,7 @@
 // redirected to /admin/login.
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -39,10 +39,13 @@ const navItems = [
   { label: "Media Library", href: "/admin/media", icon: UploadCloud },
 ];
 
+const subscribeNoop = () => () => {};
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
+  // Client-only flag: false during SSR/hydration, true on the client.
+  const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
 
@@ -51,15 +54,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // Auth guard: runs after mount (localStorage is unavailable during SSR),
   // redirecting to the login page unless an admin token is present.
   useEffect(() => {
-    setMounted(true);
-    if (!isLoginPage) {
-      const token = getAdminToken();
-      if (!token) {
+    if (isLoginPage) return;
+    const id = window.setTimeout(() => {
+      if (!getAdminToken()) {
         router.push("/admin/login");
       } else {
         setUser(getAdminUser());
       }
-    }
+    }, 0);
+    return () => window.clearTimeout(id);
   }, [pathname, isLoginPage, router]);
 
   // Wipe the stored token/user, then send the admin back to the login screen.

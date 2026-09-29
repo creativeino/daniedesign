@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import { Plus, Search, Trash2, Edit3, ArrowUpRight, Star, Loader2, Clock } from "lucide-react";
 import { getBlogPosts, deleteBlogPost } from "@/lib/api";
 import { BlogPost } from "@/data/blog";
@@ -18,16 +18,11 @@ export default function AdminBlogsPage() {
   const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
 
   // Load the full list of blog posts from the backend.
-  const fetchBlogs = async () => {
-    setLoading(true);
-    try {
-      const data = await getBlogPosts();
-      setBlogs(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  const fetchBlogs = () => {
+    getBlogPosts()
+      .then((data) => setBlogs(data))
+      .catch((e) => console.error(e))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -42,8 +37,8 @@ export default function AdminBlogsPage() {
     try {
       await deleteBlogPost(slug);
       setBlogs((prev) => prev.filter((b) => b.slug !== slug));
-    } catch (err: any) {
-      alert(err.message || "Failed to delete article");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete article");
     } finally {
       setDeletingSlug(null);
     }
@@ -118,7 +113,7 @@ export default function AdminBlogsPage() {
             >
               <div>
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-black/40">
-                  <Image
+                  <MediaImage
                     src={post.image}
                     alt={post.title}
                     fill

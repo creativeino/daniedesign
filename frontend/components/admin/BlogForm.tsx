@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import Link from "next/link";
 import {
   UploadCloud,
@@ -78,8 +78,8 @@ export default function BlogForm({ initialData, isEdit = false }: Props) {
     try {
       const res = await uploadImage(file);
       setForm((prev) => ({ ...prev, image: res.url }));
-    } catch (err: any) {
-      setError(err.message || "Failed to upload image");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to upload image");
     } finally {
       setUploadingCover(false);
     }
@@ -140,8 +140,8 @@ export default function BlogForm({ initialData, isEdit = false }: Props) {
       }
       // Back to the article list after a successful save.
       router.push("/admin/blogs");
-    } catch (err: any) {
-      setError(err.message || "Failed to save article");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save article");
     } finally {
       setSubmitting(false);
     }
@@ -323,7 +323,7 @@ export default function BlogForm({ initialData, isEdit = false }: Props) {
               />
               {form.image && (
                 <div className="relative aspect-[16/9] w-full rounded-lg overflow-hidden border border-white/10 bg-black/40">
-                  <Image src={form.image} alt="Header Preview" fill className="object-cover" />
+                  <MediaImage src={form.image} alt="Header Preview" fill className="object-cover" />
                 </div>
               )}
             </div>

@@ -14,6 +14,7 @@ import ScrollProgress from "@/components/portfolio/ScrollProgress";
 import ParallaxFrame from "@/components/portfolio/ParallaxFrame";
 import ImpactBand, { type ProjectStat } from "@/components/portfolio/ImpactBand";
 import ChapterRail from "@/components/portfolio/ChapterRail";
+import MediaImage from "@/components/shared/MediaImage";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -317,11 +318,11 @@ export default async function ProjectPage({ params }: Props) {
               className="group relative block overflow-hidden rounded-2xl border border-ink/10 bg-panel"
             >
               <div className="relative h-56 w-full overflow-hidden md:h-64">
-                <img
+                <MediaImage
                   src={nextProject.image}
                   alt={`${nextProject.title} — next project`}
-                  className="h-full w-full object-cover grayscale brightness-[0.7] transition-all duration-700 ease-out group-hover:scale-[1.04] group-hover:grayscale-0 group-hover:brightness-90"
-                  loading="lazy"
+                  fill
+                  className="object-cover grayscale brightness-[0.7] transition-all duration-700 ease-out group-hover:scale-[1.04] group-hover:grayscale-0 group-hover:brightness-90"
                 />
               </div>
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />

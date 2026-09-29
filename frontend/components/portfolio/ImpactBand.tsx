@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import SplitText from "@/components/animations/SplitText";
 import CountUp from "@/components/animations/CountUp";
 import FadeUp from "@/components/animations/FadeUp";

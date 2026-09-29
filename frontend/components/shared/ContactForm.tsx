@@ -55,7 +55,6 @@ export default function ContactForm() {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<Errors>({});
   const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(false);
 
   const set =
@@ -82,7 +81,6 @@ export default function ContactForm() {
     setErrors(next);
     if (Object.values(next).some(Boolean)) return;
 
-    setLoading(true);
     setApiError(false);
     try {
       await submitContactInquiry(form);
@@ -91,9 +89,7 @@ export default function ContactForm() {
       // Backend unreachable — keep the form filled and offer a direct email fallback.
       setApiError(true);
     }
-    setLoading(false);
   };
-
   if (sent) {
     return (
       <motion.div

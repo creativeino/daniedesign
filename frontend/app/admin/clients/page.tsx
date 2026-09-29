@@ -3,29 +3,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users2, Plus, Trash2, Loader2 } from "lucide-react";
+import { Trash2, Loader2 } from "lucide-react";
 import { getClients, createClient, deleteClient } from "@/lib/api";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+type ClientEntry = string | { name: string; quote?: string | null };
+
 export default function AdminClientsPage() {
-  const [clients, setClients] = useState<any[]>([]);
+  const [clients, setClients] = useState<ClientEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [quote, setQuote] = useState("");
   const [adding, setAdding] = useState(false);
 
-  const fetchClientsList = async () => {
-    setLoading(true);
-    try {
-      const data = await getClients();
-      setClients(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  const fetchClientsList = () => {
+    getClients()
+      .then((data) => setClients(data))
+      .catch((e) => console.error(e))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -41,9 +38,10 @@ export default function AdminClientsPage() {
       await createClient({ name, quote, featured: true });
       setName("");
       setQuote("");
+      setLoading(true);
       await fetchClientsList();
-    } catch (err: any) {
-      alert(err.message || "Failed to add client");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to add client");
     } finally {
       setAdding(false);
     }
@@ -56,8 +54,8 @@ export default function AdminClientsPage() {
     try {
       await deleteClient(id);
       setClients((prev) => prev.filter((_, i) => i !== id - 1));
-    } catch (err: any) {
-      alert(err.message || "Failed to delete client");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete client");
     }
   };
 

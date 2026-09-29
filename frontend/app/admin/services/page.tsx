@@ -3,11 +3,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import { Sliders, CheckCircle2, Loader2, UploadCloud, Edit3 } from "lucide-react";
+import MediaImage from "@/components/shared/MediaImage";
+import { CheckCircle2, Loader2, UploadCloud, Edit3 } from "lucide-react";
 import { getServices, updateService, uploadImage } from "@/lib/api";
 import { Service } from "@/data/services";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -20,16 +20,11 @@ export default function AdminServicesPage() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const fetchServices = async () => {
-    setLoading(true);
-    try {
-      const data = await getServices();
-      setServices(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  const fetchServices = () => {
+    getServices()
+      .then((data) => setServices(data))
+      .catch((e) => console.error(e))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -51,8 +46,8 @@ export default function AdminServicesPage() {
     try {
       const res = await uploadImage(file);
       setEditForm((prev) => ({ ...prev, image: res.url }));
-    } catch (err: any) {
-      alert(err.message || "Failed to upload image");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to upload image");
     } finally {
       setUploadingImage(false);
     }
@@ -66,10 +61,11 @@ export default function AdminServicesPage() {
     setSaving(true);
     try {
       await updateService(editingId, editForm);
+      setLoading(true);
       await fetchServices();
       setEditingId(null);
-    } catch (err: any) {
-      alert(err.message || "Failed to update service");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to update service");
     } finally {
       setSaving(false);
     }
@@ -109,7 +105,7 @@ export default function AdminServicesPage() {
                 </div>
 
                 <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-black/40 mb-3.5">
-                  <Image src={s.image} alt={s.title} fill className="object-cover" />
+                  <MediaImage src={s.image} alt={s.title} fill className="object-cover" />
                 </div>
 
                 <h3 className="text-base font-bold text-white">{s.title}</h3>

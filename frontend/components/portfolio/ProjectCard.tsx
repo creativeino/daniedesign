@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/data/projects";
 import TiltCard from "@/components/animations/TiltCard";
@@ -27,7 +27,7 @@ export default function ProjectCard({ project, className, imgSizes }: ProjectCar
       >
         {/* Image area — fixed aspect ratio */}
         <div className="relative aspect-[4/3] w-full overflow-hidden">
-          <Image
+          <MediaImage
             src={project.image}
             alt={project.title}
             fill

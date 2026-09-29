@@ -1,4 +1,4 @@
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import Link from "next/link";
 import { ArrowUpRight, Clock } from "lucide-react";
 import { blogPosts } from "@/data/blog";
@@ -53,7 +53,7 @@ export default function BlogPreview() {
 
               <div>
                 <div className="relative aspect-[16/10] w-full overflow-hidden bg-card">
-                  <Image
+                  <MediaImage
                     src={post.image}
                     alt={post.title}
                     fill

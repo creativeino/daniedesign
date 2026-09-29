@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import {
   UploadCloud,
@@ -19,6 +18,7 @@ import {
 } from "lucide-react";
 import { createProject, updateProject, uploadImage, uploadMultipleImages } from "@/lib/api";
 import { isVideoUrl } from "@/lib/utils";
+import MediaImage from "@/components/shared/MediaImage";
 import { Project } from "@/data/projects";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,7 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
     image: initialData?.image || "",
     services: initialData?.services || ["Brand Strategy", "Visual Identity"],
     featured: initialData?.featured ?? true,
+    order: initialData?.order ?? 0,
     gallery: initialData?.gallery || [],
     features: initialData?.features || [],
     technologies: initialData?.technologies || [],
@@ -95,8 +96,8 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
     try {
       const res = await uploadImage(file);
       setForm((prev) => ({ ...prev, image: res.url }));
-    } catch (err: any) {
-      setError(err.message || "Failed to upload cover image");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to upload cover image");
     } finally {
       setUploadingCover(false);
     }
@@ -117,8 +118,8 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
         ...prev,
         gallery: [...(prev.gallery || []), ...urls],
       }));
-    } catch (err: any) {
-      setError(err.message || "Failed to upload gallery images");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to upload gallery images");
     } finally {
       setUploadingGallery(false);
     }
@@ -150,8 +151,8 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
       }
       // Back to the projects list after a successful save.
       router.push("/admin/projects");
-    } catch (err: any) {
-      setError(err.message || "Failed to save project");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save project");
     } finally {
       setSubmitting(false);
     }
@@ -262,6 +263,23 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
                 onChange={(e) => setForm({ ...form, year: e.target.value })}
                 placeholder="2025"
               />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-mono text-white/60 mb-1.5 uppercase">
+                Display Order
+              </label>
+              <Input
+                type="number"
+                value={form.order ?? 0}
+                onChange={(e) =>
+                  setForm({ ...form, order: Math.max(0, Math.floor(Number(e.target.value) || 0)) })
+                }
+                placeholder="0"
+              />
+              <p className="mt-1 text-[10px] font-mono text-white/35">
+                Lower number = higher up (1 is first). 0 = keep default (newest first).
+              </p>
             </div>
           </div>
 
@@ -374,7 +392,7 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
                 />
                 {form.image && (
                   <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden border border-white/10 bg-black/40">
-                    <Image src={form.image} alt="Cover Preview" fill className="object-cover" />
+                    <MediaImage src={form.image} alt="Cover Preview" fill className="object-cover" />
                   </div>
                 )}
               </div>
@@ -413,7 +431,7 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
                     {isVideoUrl(url) ? (
                       <video src={url} muted playsInline preload="metadata" className="h-full w-full object-cover" />
                     ) : (
-                      <Image src={url} alt={`Gallery ${idx + 1}`} fill className="object-cover" />
+                      <MediaImage src={url} alt={`Gallery ${idx + 1}`} fill className="object-cover" />
                     )}
                     <span className="absolute left-1.5 bottom-1.5 rounded bg-black/60 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-white/80">
                       {isVideoUrl(url) ? "Video" : "Image"}

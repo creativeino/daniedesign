@@ -4,17 +4,16 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import {
   UploadCloud,
   Copy,
   Check,
   ExternalLink,
-  Loader2,
   FileImage,
 } from "lucide-react";
-import { uploadMultipleImages } from "@/lib/api";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { uploadMultipleImages, UploadedMediaItem } from "@/lib/api";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 // Client-side limits — must match backend config (MAX_UPLOAD_SIZE_MB /
@@ -35,7 +34,7 @@ const isVideo = (nameOrType: string) => {
 };
 
 export default function AdminMediaPage() {
-  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedMediaItem[]>([]);
   const [uploading, setUploading] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
 
@@ -58,8 +57,8 @@ export default function AdminMediaPage() {
     try {
       const results = await uploadMultipleImages(files);
       setUploadedFiles((prev) => [...results, ...prev]);
-    } catch (err: any) {
-      alert(err.message || "Failed to upload files");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to upload files");
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -138,7 +137,7 @@ export default function AdminMediaPage() {
                       preload="metadata"
                     />
                   ) : (
-                    <Image src={file.url} alt={file.filename} fill className="object-cover" />
+                    <MediaImage src={file.url} alt={file.filename} fill className="object-cover" />
                   )}
                 </div>
 

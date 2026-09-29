@@ -7,34 +7,38 @@ import {
   Mail,
   Search,
   Trash2,
-  CheckCircle2,
-  Clock,
   Building,
   Loader2,
 } from "lucide-react";
 import { getContactInquiries, updateInquiryStatus, deleteInquiry } from "@/lib/api";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 
+type ContactInquiry = {
+  id: number;
+  name: string;
+  email: string;
+  company?: string | null;
+  service: string;
+  message: string;
+  status: string;
+  created_at?: string | null;
+};
+
 export default function AdminInquiriesPage() {
-  const [inquiries, setInquiries] = useState<any[]>([]);
+  const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedInquiry, setSelectedInquiry] = useState<any | null>(null);
+  const [selectedInquiry, setSelectedInquiry] = useState<ContactInquiry | null>(null);
 
-  const fetchInquiries = async () => {
-    setLoading(true);
-    try {
-      const data = await getContactInquiries();
-      setInquiries(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  const fetchInquiries = () => {
+    getContactInquiries()
+      .then((data) => setInquiries(data))
+      .catch((e) => console.error(e))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -52,8 +56,8 @@ export default function AdminInquiriesPage() {
       if (selectedInquiry?.id === id) {
         setSelectedInquiry({ ...selectedInquiry, status: newStatus });
       }
-    } catch (err: any) {
-      alert(err.message || "Failed to update status");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to update status");
     }
   };
 
@@ -65,8 +69,8 @@ export default function AdminInquiriesPage() {
       await deleteInquiry(id);
       setInquiries((prev) => prev.filter((inq) => inq.id !== id));
       if (selectedInquiry?.id === id) setSelectedInquiry(null);
-    } catch (err: any) {
-      alert(err.message || "Failed to delete inquiry");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete inquiry");
     }
   };
 

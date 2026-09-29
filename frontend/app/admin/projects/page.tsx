@@ -4,12 +4,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Plus, Search, Trash2, Edit3, ExternalLink, Star, Loader2, ArrowUpRight } from "lucide-react";
-import { getProjects, deleteProject } from "@/lib/api";
+import MediaImage from "@/components/shared/MediaImage";
+import { Plus, Search, Trash2, Edit3, Star, Loader2, ArrowUpRight, ChevronUp, ChevronDown, GripVertical } from "lucide-react";
+import { getProjects, deleteProject, updateProject } from "@/lib/api";
 import { Project } from "@/data/projects";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 
 export default function AdminProjectsPage() {
@@ -18,18 +17,19 @@ export default function AdminProjectsPage() {
   const [search, setSearch] = useState("");
   const [selectedCat, setSelectedCat] = useState("All");
   const [deletingSlug, setDeletingSlug] = useState<string | null>(null);
+  const [reordering, setReordering] = useState(false);
+  // Drag & drop state: `dragReady` = handle pressed (arms `draggable`),
+  // `draggingSlug` = card currently being dragged, `overSlug` = drop target.
+  const [dragReady, setDragReady] = useState<string | null>(null);
+  const [draggingSlug, setDraggingSlug] = useState<string | null>(null);
+  const [overSlug, setOverSlug] = useState<string | null>(null);
 
   // Load the project list from the backend /projects API.
-  const fetchProjects = async () => {
-    setLoading(true);
-    try {
-      const data = await getProjects();
-      setProjects(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  const fetchProjects = () => {
+    getProjects()
+      .then((data) => setProjects(data))
+      .catch((e) => console.error(e))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -44,11 +44,98 @@ export default function AdminProjectsPage() {
     try {
       await deleteProject(slug);
       setProjects((prev) => prev.filter((p) => p.slug !== slug));
-    } catch (err: any) {
-      alert(err.message || "Failed to delete project");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete project");
     } finally {
       setDeletingSlug(null);
     }
+  };
+
+  // Persist a new ordering of the visible cards: the reordered items are
+  // written back into the slots they occupy in the full list (hidden/filter-
+  // excluded projects keep their relative position), every project is then
+  // renumbered 1..n and only the changed numbers are sent to the API.
+  // Optimistic — the previous order is restored if any request fails.
+  const persistOrder = async (newVisible: Project[]) => {
+    if (reordering) return;
+    const before = projects;
+    const visibleSlugs = new Set(filtered.map((p) => p.slug));
+    const reordered = new Map(newVisible.map((p) => [p.slug, p]));
+
+    const merged = before.map((p) => (visibleSlugs.has(p.slug) ? reordered.get(p.slug)! : p));
+    const previousOrder = new Map(before.map((p) => [p.slug, p.order ?? 0]));
+    const renumbered = merged.map((p, idx) => ({ ...p, order: idx + 1 }));
+    const changed = renumbered.filter((p) => (p.order ?? 0) !== previousOrder.get(p.slug));
+
+    setReordering(true);
+    setProjects(renumbered);
+    try {
+      await Promise.all(changed.map((p) => updateProject(p.slug, { order: p.order ?? 0 })));
+    } catch (err) {
+      setProjects(before);
+      alert(err instanceof Error ? err.message : "Failed to reorder projects");
+    } finally {
+      setReordering(false);
+      setDraggingSlug(null);
+      setDragReady(null);
+      setOverSlug(null);
+    }
+  };
+
+  // ↑/↓ buttons: swap the card with its visible neighbour.
+  const handleMove = async (slug: string, dir: -1 | 1) => {
+    if (reordering) return;
+    const visible = filtered;
+    const vi = visible.findIndex((p) => p.slug === slug);
+    const neighbor = visible[vi + dir];
+    if (vi < 0 || !neighbor) return;
+
+    const newVisible = [...visible];
+    [newVisible[vi], newVisible[vi + dir]] = [newVisible[vi + dir], newVisible[vi]];
+    await persistOrder(newVisible);
+  };
+
+  // ── Drag & drop (native HTML5) ──────────────────────────────────────────
+  // Dragging is only armed from the grip handle so links/buttons on the card
+  // keep working; the drop lands the card before/after the hovered half of
+  // the target. ↑/↓ buttons stay as the touch fallback.
+  const handleDragStart = (e: React.DragEvent, slug: string) => {
+    e.dataTransfer.effectAllowed = "move";
+    // Firefox requires data to be set for the drag to start
+    e.dataTransfer.setData("text/plain", slug);
+    setDraggingSlug(slug);
+  };
+
+  const handleDragOver = (e: React.DragEvent, slug: string) => {
+    if (!draggingSlug) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (overSlug !== slug) setOverSlug(slug);
+  };
+
+  const handleDrop = (e: React.DragEvent, targetSlug: string) => {
+    e.preventDefault();
+    const src = draggingSlug;
+    setOverSlug(null);
+    if (!src || src === targetSlug || reordering) return;
+
+    // Drop in the lower half of the target card = land after it.
+    const rect = e.currentTarget.getBoundingClientRect();
+    const after = e.clientY > rect.top + rect.height / 2;
+
+    const list = filtered.filter((p) => p.slug !== src);
+    const targetIndex = list.findIndex((p) => p.slug === targetSlug);
+    if (targetIndex < 0) return;
+    const moved = filtered.find((p) => p.slug === src);
+    if (!moved) return;
+    list.splice(after ? targetIndex + 1 : targetIndex, 0, moved);
+    void persistOrder(list);
+  };
+
+  const handleDragEnd = () => {
+    setDraggingSlug(null);
+    setDragReady(null);
+    setOverSlug(null);
   };
 
   const categories = ["All", "Branding", "UI/UX", "Web", "Mobile", "Marketing"];
@@ -136,17 +223,40 @@ export default function AdminProjectsPage() {
           {filtered.map((proj) => (
             <div
               key={proj.slug}
-              className="group relative flex flex-col justify-between rounded-2xl border border-white/[0.07] bg-[#111111] overflow-hidden hover:border-[#ff4d1f]/40 transition-all duration-300 shadow-sm"
+              draggable={dragReady === proj.slug && !reordering}
+              onDragStart={(e) => handleDragStart(e, proj.slug)}
+              onDragOver={(e) => handleDragOver(e, proj.slug)}
+              onDrop={(e) => handleDrop(e, proj.slug)}
+              onDragEnd={handleDragEnd}
+              className={`group relative flex flex-col justify-between rounded-2xl border bg-[#111111] overflow-hidden transition-all duration-300 shadow-sm ${
+                overSlug === proj.slug && draggingSlug && draggingSlug !== proj.slug
+                  ? "border-[#ff4d1f] scale-[1.015] shadow-[0_8px_30px_rgba(255,77,31,0.18)]"
+                  : draggingSlug === proj.slug
+                    ? "border-[#ff4d1f]/60 opacity-45 rotate-1"
+                    : "border-white/[0.07] hover:border-[#ff4d1f]/40"
+              }`}
             >
               <div>
                 {/* Thumbnail */}
                 <div className="relative aspect-[16/10] w-full overflow-hidden bg-black/40">
-                  <Image
+                  <MediaImage
                     src={proj.image}
                     alt={proj.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
+                  {/* Drag handle — only arming the card from here keeps the
+                      links/buttons below clickable. */}
+                  <button
+                    type="button"
+                    onMouseDown={() => setDragReady(proj.slug)}
+                    onMouseUp={() => setDragReady(null)}
+                    className="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/60 backdrop-blur-md transition-colors hover:border-[#ff4d1f] hover:text-[#ff4d1f] cursor-grab active:cursor-grabbing"
+                    title="Drag to reorder"
+                    aria-label={`Drag ${proj.title} to reorder`}
+                  >
+                    <GripVertical className="h-3.5 w-3.5" />
+                  </button>
                   <div className="absolute top-3 left-3 flex items-center gap-1.5">
                     <span className="font-mono text-[9px] uppercase tracking-widest bg-black/80 backdrop-blur-md text-[#ff4d1f] px-2.5 py-1 rounded-full border border-white/10">
                       {proj.category}
@@ -155,6 +265,11 @@ export default function AdminProjectsPage() {
                       <span className="font-mono text-[9px] uppercase tracking-widest bg-amber-500/20 backdrop-blur-md text-amber-300 px-2 py-1 rounded-full border border-amber-500/30 flex items-center gap-1">
                         <Star className="h-2.5 w-2.5 fill-current" />
                         Featured
+                      </span>
+                    )}
+                    {(proj.order ?? 0) > 0 && (
+                      <span className="font-mono text-[9px] uppercase tracking-widest bg-black/80 backdrop-blur-md text-[#ff4d1f] px-2 py-1 rounded-full border border-[#ff4d1f]/40">
+                        #{proj.order}
                       </span>
                     )}
                   </div>
@@ -202,6 +317,28 @@ export default function AdminProjectsPage() {
                 </Link>
 
                 <div className="flex items-center gap-2">
+                  {/* Manual ordering — move the card one step up/down in the list */}
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleMove(proj.slug, -1)}
+                      disabled={reordering || filtered[0]?.slug === proj.slug}
+                      className="h-7 w-7 rounded-full border border-white/[0.08] bg-white/[0.04] text-[#9a968e] hover:border-[#ff4d1f]/50 hover:text-[#ff4d1f] disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-[#9a968e] disabled:hover:border-white/[0.08] flex items-center justify-center transition-all cursor-pointer"
+                      title="Move up"
+                    >
+                      {reordering ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ChevronUp className="h-3.5 w-3.5" />}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleMove(proj.slug, 1)}
+                      disabled={reordering || filtered[filtered.length - 1]?.slug === proj.slug}
+                      className="h-7 w-7 rounded-full border border-white/[0.08] bg-white/[0.04] text-[#9a968e] hover:border-[#ff4d1f]/50 hover:text-[#ff4d1f] disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-[#9a968e] disabled:hover:border-white/[0.08] flex items-center justify-center transition-all cursor-pointer"
+                      title="Move down"
+                    >
+                      <ChevronDown className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+
                   <Link href={`/admin/projects/edit/${proj.slug}`}>
                     <Button variant="outline" size="sm" className="h-7 text-[10px] px-3 gap-1">
                       <Edit3 className="h-3 w-3" />

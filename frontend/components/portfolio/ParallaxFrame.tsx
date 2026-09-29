@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import FadeUp from "@/components/animations/FadeUp";
@@ -94,7 +94,7 @@ export default function ParallaxFrame({ src, alt, caption, aspect = "16/7" }: Pa
               style={{ aspectRatio: aspect }}
             >
               <div className="absolute -inset-y-[12%] inset-x-0">
-                <Image
+                <MediaImage
                   ref={imgRef}
                   src={src}
                   alt={alt}

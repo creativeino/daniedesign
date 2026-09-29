@@ -15,8 +15,6 @@ export default function Navbar() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const isHome = pathname === "/";
-
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 40);
   });

@@ -23,8 +23,8 @@ export default function RollNumber({ value, digits = 2, className }: RollNumberP
     const el = ref.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setArmed(true);
-      return;
+      const id = window.setTimeout(() => setArmed(true), 0);
+      return () => window.clearTimeout(id);
     }
     const io = new IntersectionObserver(
       (entries) => {

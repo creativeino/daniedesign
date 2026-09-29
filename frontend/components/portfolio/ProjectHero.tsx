@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import { useRef } from "react";
 import {
   motion,
@@ -78,7 +78,7 @@ export default function ProjectHero({
           }}
           className="relative h-full w-full"
         >
-          <Image
+          <MediaImage
             src={image}
             alt={`${title} — main visual`}
             fill

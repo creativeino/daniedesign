@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import { useRef } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -86,7 +86,7 @@ export default function CreativeWall() {
         className="pointer-events-none fixed left-0 top-0 z-[80] hidden h-56 w-44 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-xl opacity-0 lg:block"
         aria-hidden="true"
       >
-        <Image
+        <MediaImage
           ref={imgRef}
           src={creativeItems[0].image}
           alt=""
@@ -96,7 +96,7 @@ export default function CreativeWall() {
         />
         {preview && (
           <div className="absolute inset-0">
-            <Image src={preview} alt="" fill sizes="176px" className="photo-duo object-cover" />
+            <MediaImage src={preview} alt="" fill sizes="176px" className="photo-duo object-cover" />
           </div>
         )}
       </div>

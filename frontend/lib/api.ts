@@ -11,8 +11,7 @@ import { projects as fallbackProjects, Project } from "@/data/projects";
 import { blogPosts as fallbackBlogPosts, BlogPost } from "@/data/blog";
 import { services as fallbackServices, Service } from "@/data/services";
 import { creativeItems as fallbackCreative, CreativeItem } from "@/data/creative";
-import { clients as fallbackClients, clientBlurbs } from "@/data/clients";
-import { stats as fallbackStats, heroStats as fallbackHeroStats, impactStory as fallbackImpact } from "@/data/stats";
+import { clients as fallbackClients } from "@/data/clients";
 
 /** Root URL of the backend API, overridable via NEXT_PUBLIC_API_URL. */
 export const API_BASE_URL =
@@ -278,8 +277,8 @@ export async function getBlogPosts(params?: {
   try {
     const res = await fetch(`${API_BASE_URL}/blogs${qs}`, { cache: "no-store" });
     if (res.ok) {
-      const raw = await res.json();
-      return (raw as any[]).map(normalizeBlogPost);
+      const raw = (await res.json()) as Record<string, unknown>[];
+      return raw.map(normalizeBlogPost);
     }
   } catch {}
   return fallbackBlogPosts;
@@ -698,6 +697,14 @@ export async function uploadImage(file: File): Promise<{ filename: string; url: 
   return await res.json();
 }
 
+/** One file returned by a successful batch upload. */
+export type UploadedMediaItem = {
+  filename: string;
+  url: string;
+  content_type: string;
+  size: number;
+};
+
 /**
  * Upload several images at once (used by multi-image admin forms).
  *
@@ -705,7 +712,7 @@ export async function uploadImage(file: File): Promise<{ filename: string; url: 
  * @returns The uploaded records (`filename` and `url`); empty if none succeeded.
  * @throws Error with the backend's `detail` message on failure.
  */
-export async function uploadMultipleImages(files: FileList | File[]): Promise<{ filename: string; url: string }[]> {
+export async function uploadMultipleImages(files: FileList | File[]): Promise<UploadedMediaItem[]> {
   const formData = new FormData();
   for (let i = 0; i < files.length; i++) {
     formData.append("files", files[i]);

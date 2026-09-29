@@ -3,15 +3,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import { Users2, Plus, Trash2, UploadCloud, Loader2 } from "lucide-react";
+import MediaImage from "@/components/shared/MediaImage";
+import { Trash2, UploadCloud, Loader2 } from "lucide-react";
 import { getTeamMembers, createTeamMember, deleteTeamMember, uploadImage } from "@/lib/api";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+type TeamMember = { id: number; name: string; role: string; image: string };
+
 export default function AdminTeamPage() {
-  const [team, setTeam] = useState<any[]>([]);
+  const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
@@ -19,16 +21,11 @@ export default function AdminTeamPage() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [adding, setAdding] = useState(false);
 
-  const fetchTeam = async () => {
-    setLoading(true);
-    try {
-      const data = await getTeamMembers();
-      setTeam(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  const fetchTeam = () => {
+    getTeamMembers()
+      .then((data) => setTeam(data))
+      .catch((e) => console.error(e))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -43,8 +40,8 @@ export default function AdminTeamPage() {
     try {
       const res = await uploadImage(file);
       setImage(res.url);
-    } catch (err: any) {
-      alert(err.message || "Failed to upload photo");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to upload photo");
     } finally {
       setUploadingImage(false);
     }
@@ -64,9 +61,10 @@ export default function AdminTeamPage() {
       setName("");
       setRole("");
       setImage("");
+      setLoading(true);
       await fetchTeam();
-    } catch (err: any) {
-      alert(err.message || "Failed to add team member");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to add team member");
     } finally {
       setAdding(false);
     }
@@ -78,8 +76,8 @@ export default function AdminTeamPage() {
     try {
       await deleteTeamMember(id);
       setTeam((prev) => prev.filter((m) => m.id !== id));
-    } catch (err: any) {
-      alert(err.message || "Failed to delete team member");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete team member");
     }
   };
 
@@ -176,7 +174,7 @@ export default function AdminTeamPage() {
               className="p-2.5 flex flex-col justify-between hover:border-accent/40 transition-all"
             >
               <div className="relative aspect-[4/5] w-full rounded-lg overflow-hidden bg-black/40 border border-white/5 mb-2">
-                <Image src={m.image} alt={m.name} fill className="object-cover" />
+                <MediaImage src={m.image} alt={m.name} fill className="object-cover" />
               </div>
               <div>
                 <h4 className="text-xs font-bold text-white truncate">{m.name}</h4>

@@ -192,7 +192,10 @@ function PixelSwap({
 
   // Snapshot the animation inputs so a transition already in flight is never
   // rebuilt halfway through by an unrelated prop change.
-  const config = { duration, pixelDuration, pixelSpin, pixelScale, pixelRadius, fade, easing, onComplete };
+  const config = useMemo(
+    () => ({ duration, pixelDuration, pixelSpin, pixelScale, pixelRadius, fade, easing, onComplete }),
+    [duration, pixelDuration, pixelSpin, pixelScale, pixelRadius, fade, easing, onComplete]
+  );
   const configRef = useRef(config);
   const gridRef = useRef(grid);
 

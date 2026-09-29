@@ -3,7 +3,7 @@
 // sections directly, and the shared components (ApproachSteps, AwardsShowcase,
 // ClientsMarquee) carry their own inline data. No data/ imports, no API fetch.
 import type { Metadata } from "next";
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import PageHero from "@/components/shared/PageHero";
@@ -299,7 +299,7 @@ export default function AgencyPage() {
                   className="group relative flex h-full flex-col border border-ink/10 bg-panel transition-colors duration-500 hover:border-accent/50"
                 >
                   <div className="relative aspect-[4/5] w-full overflow-hidden">
-                    <Image
+                    <MediaImage
                       src={member.image}
                       alt={member.name}
                       fill

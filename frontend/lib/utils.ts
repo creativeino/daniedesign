@@ -36,3 +36,22 @@ export function isVideoUrl(url: string): boolean {
   const path = url.split(/[?#]/)[0].toLowerCase();
   return VIDEO_EXTENSIONS.some((ext) => path.endsWith(ext));
 }
+
+/**
+ * Formats the Next.js image optimizer can re-encode. Anything else (svg, gif,
+ * bmp, tiff, ico, heic…) must bypass `next/image` or the optimizer throws a
+ * 400 on the source format — see `components/shared/MediaImage`.
+ */
+const OPTIMIZABLE_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".avif"];
+
+/**
+ * Whether a media URL is safe to render through `next/image`.
+ *
+ * @param url Media URL (query strings and hashes are ignored).
+ * @returns true for jpg/png/webp/avif sources.
+ */
+export function isOptimizableImage(url: string): boolean {
+  if (!url) return false;
+  const path = url.split(/[?#]/)[0].toLowerCase();
+  return OPTIMIZABLE_IMAGE_EXTENSIONS.some((ext) => path.endsWith(ext));
+}

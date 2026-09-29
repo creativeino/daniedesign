@@ -34,8 +34,12 @@ export default function AdminLoginPage() {
       // loginAdmin stores the token on success; any failure throws with a message.
       await loginAdmin(email, password);
       router.push("/admin");
-    } catch (err: any) {
-      setError(err.message || "Failed to log in. Please check your credentials.");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to log in. Please check your credentials."
+      );
     } finally {
       setLoading(false);
     }

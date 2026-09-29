@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import TiltCard from "@/components/animations/TiltCard";
@@ -64,22 +64,60 @@ function CountUp({ value }: { value: number }) {
   return <>{display}</>;
 }
 
+type DashboardCounts = {
+  projects: number;
+  blogs: number;
+  services: number;
+  inquiries: number;
+  new_inquiries: number;
+  creative: number;
+  clients: number;
+  team: number;
+};
+
+type RecentInquiry = {
+  id: number;
+  name: string;
+  service: string;
+  email: string;
+  status: "new" | "contacted" | "resolved" | string;
+};
+
+type RecentProject = {
+  slug: string;
+  image: string;
+  title: string;
+  category: string;
+  year: string | number;
+};
+
+type RecentBlog = {
+  slug: string;
+  image: string;
+  title: string;
+  category: string;
+  date: string;
+  featured?: boolean;
+};
+
+type DashboardSummary = {
+  counts: DashboardCounts;
+  recent_inquiries: RecentInquiry[];
+  recent_projects: RecentProject[];
+  recent_blogs: RecentBlog[];
+};
+
 export default function AdminDashboardPage() {
   const router = useRouter();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Fetch (or refetch via the Refresh button) the dashboard summary from the API.
-  const fetchSummary = async () => {
-    setLoading(true);
-    try {
-      const summary = await getDashboardSummary();
-      setData(summary);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  const fetchSummary = () => {
+    getDashboardSummary()
+      .then((summary) => setData(summary))
+      .catch((e) => console.error(e))
+      .finally(() => setLoading(false));
   };
 
   const handleLogout = () => {
@@ -219,7 +257,10 @@ export default function AdminDashboardPage() {
 
         <div className="flex flex-wrap items-center gap-2.5">
           <button
-            onClick={fetchSummary}
+            onClick={() => {
+              setLoading(true);
+              fetchSummary();
+            }}
             className="h-9 w-9 rounded-full border border-white/15 bg-white/[0.04] flex items-center justify-center text-[#9a968e] hover:text-[#f4f2ee] hover:border-[#ff4d1f]/40 transition-all"
             title="Refresh"
           >
@@ -280,7 +321,7 @@ export default function AdminDashboardPage() {
         variants={item}
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
       >
-        {statCards.map((c, i) => {
+        {statCards.map((c) => {
           const Icon = c.icon;
           return (
             <motion.div key={c.label} variants={item}>
@@ -347,7 +388,7 @@ export default function AdminDashboardPage() {
           Quick Actions
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {quickActions.map((a, i) => {
+          {quickActions.map((a) => {
             const Icon = a.icon;
             return (
               <motion.div key={a.label} variants={item}>
@@ -412,7 +453,7 @@ export default function AdminDashboardPage() {
               </div>
             ) : (
               <div className="space-y-1">
-                {data.recent_inquiries.map((inq: any) => (
+                {data.recent_inquiries.map((inq) => (
                   <div
                     key={inq.id}
                     className="flex items-center justify-between gap-4 rounded-xl px-3 py-3 hover:bg-white/[0.04] transition-colors"
@@ -465,13 +506,13 @@ export default function AdminDashboardPage() {
               ? Array.from({ length: 4 }).map((_, i) => (
                   <div key={i} className="animate-pulse aspect-[16/10] rounded-xl bg-white/[0.04]" />
                 ))
-              : data.recent_projects.map((proj: any) => (
+              : data.recent_projects.map((proj) => (
                   <Link
                     key={proj.slug}
                     href={`/admin/projects/edit/${proj.slug}`}
                     className="group relative aspect-[16/10] rounded-xl overflow-hidden bg-black/40 block"
                   >
-                    <Image
+                    <MediaImage
                       src={proj.image}
                       alt={proj.title}
                       fill
@@ -526,14 +567,14 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="divide-y divide-white/[0.05]">
-            {data.recent_blogs.map((post: any) => (
+            {data.recent_blogs.map((post) => (
               <Link
                 key={post.slug}
                 href={`/admin/blogs/edit/${post.slug}`}
                 className="group flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.03] transition-colors"
               >
                 <div className="relative h-12 w-16 rounded-lg overflow-hidden bg-black/40 border border-white/5 shrink-0">
-                  <Image src={post.image} alt={post.title} fill className="object-cover" />
+                  <MediaImage src={post.image} alt={post.title} fill className="object-cover" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-[#f4f2ee] truncate group-hover:text-[#ff4d1f] transition-colors">

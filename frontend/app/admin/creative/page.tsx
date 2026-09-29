@@ -3,8 +3,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import { Palette, Plus, Trash2, UploadCloud, Loader2 } from "lucide-react";
+import MediaImage from "@/components/shared/MediaImage";
+import { Trash2, UploadCloud, Loader2 } from "lucide-react";
 import { getCreativeItems, createCreativeItem, deleteCreativeItem, uploadImage } from "@/lib/api";
 import { CreativeItem } from "@/data/creative";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -21,16 +21,11 @@ export default function AdminCreativePage() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [adding, setAdding] = useState(false);
 
-  const fetchItems = async () => {
-    setLoading(true);
-    try {
-      const data = await getCreativeItems();
-      setItems(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  const fetchItems = () => {
+    getCreativeItems()
+      .then((data) => setItems(data))
+      .catch((e) => console.error(e))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -46,8 +41,8 @@ export default function AdminCreativePage() {
     try {
       const res = await uploadImage(file);
       setNewImage(res.url);
-    } catch (err: any) {
-      alert(err.message || "Failed to upload image");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to upload image");
     } finally {
       setUploadingImage(false);
     }
@@ -68,9 +63,10 @@ export default function AdminCreativePage() {
       });
       setNewLabel("");
       setNewImage("");
+      setLoading(true);
       await fetchItems();
-    } catch (err: any) {
-      alert(err.message || "Failed to add item");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to add item");
     } finally {
       setAdding(false);
     }
@@ -83,8 +79,8 @@ export default function AdminCreativePage() {
     try {
       await deleteCreativeItem(idx + 1);
       setItems((prev) => prev.filter((_, i) => i !== idx));
-    } catch (err: any) {
-      alert(err.message || "Failed to delete item");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete item");
     }
   };
 
@@ -183,7 +179,7 @@ export default function AdminCreativePage() {
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div className="relative h-11 w-11 rounded-lg overflow-hidden bg-black/40 border border-white/10 shrink-0">
-                  <Image src={item.image} alt={item.label} fill className="object-cover" />
+                  <MediaImage src={item.image} alt={item.label} fill className="object-cover" />
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-semibold text-white truncate">{item.label}</p>

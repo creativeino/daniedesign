@@ -4,7 +4,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import Link from "next/link";
 import { ArrowUpRight, Clock, Search, BookOpen } from "lucide-react";
 import { BlogPost } from "@/data/blog";
@@ -14,7 +14,6 @@ import Button from "@/components/shared/Button";
 export default function BlogClient({ posts }: { posts: BlogPost[] }) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   // Unique categories taken from the posts themselves, with "All" prepended.
   const categories = useMemo(() => {
@@ -150,7 +149,6 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
             ) : (
               <div className="flex flex-col border-t border-white/10">
                 {filteredPosts.map((post, idx) => {
-                  const isHovered = hoveredIndex === idx;
                   return (
                     <TiltCard
                       key={post.slug}
@@ -163,8 +161,6 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
                     >
                       <Link
                         href={`/blog/${post.slug}`}
-                        onMouseEnter={() => setHoveredIndex(idx)}
-                        onMouseLeave={() => setHoveredIndex(null)}
                         className="group relative flex flex-col gap-6 border-b border-white/10 py-10 transition-all duration-300 hover:bg-white/[0.02] md:flex-row md:items-start md:gap-8 md:p-8"
                       >
                       {/* Left Number Index */}
@@ -174,7 +170,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
 
                       {/* Image Thumbnail with zoom */}
                       <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden rounded-xl border border-white/10 bg-card md:w-56 lg:w-60">
-                        <Image
+                        <MediaImage
                           src={post.image}
                           alt={post.title}
                           fill

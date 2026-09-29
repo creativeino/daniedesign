@@ -16,8 +16,11 @@ from app.database import SessionLocal
 from app.models.stored_file import StoredFile
 
 # Extension allowlists used by the media-library kind filter (mirrors upload.py)
-IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif"}
-VIDEO_EXTS = {".mp4", ".webm"}
+IMAGE_EXTS = {
+    ".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif", ".bmp", ".tif", ".tiff",
+    ".avif", ".ico", ".jfif", ".heic", ".heif",
+}
+VIDEO_EXTS = {".mp4", ".webm", ".mov"}
 
 
 def _now() -> datetime:
@@ -71,14 +74,22 @@ def list_files(kind: str = "all", limit: int = 200) -> Tuple[List[StoredFile], i
             StoredFile.size, StoredFile.modified_at,
         )
         exts = None
+        content_type_prefix = None
         if kind == "image":
             exts = IMAGE_EXTS
+            content_type_prefix = "image/"
         elif kind == "video":
             exts = VIDEO_EXTS
+            content_type_prefix = "video/"
         if exts is not None:
-            # LIKE-matched extensions avoid loading data rows just to inspect a suffix
+            # Match on the stored MIME type first (covers unfamiliar extensions
+            # such as `.heic`) with an extension LIKE as the fallback for rows
+            # saved with a generic `application/octet-stream` content type.
             query = query.filter(
-                or_(*[func.lower(StoredFile.filename).like(f"%{e}") for e in sorted(exts)])
+                or_(
+                    func.lower(StoredFile.content_type).like(f"{content_type_prefix}%"),
+                    *[func.lower(StoredFile.filename).like(f"%{e}") for e in sorted(exts)],
+                )
             )
         total = query.count()
         rows = query.order_by(StoredFile.modified_at.desc()).limit(limit).all()

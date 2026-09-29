@@ -5,9 +5,11 @@ app runs as serverless functions on Vercel where the filesystem is ephemeral.
 The public URL is served by the GET /uploads/{filename} route in app.main.
 """
 from datetime import timezone
+import mimetypes
+import re
 from pathlib import Path
 from fastapi import APIRouter, UploadFile, File, HTTPException, Query, status, Request
-from typing import List
+from typing import List, Optional
 from app import storage
 from app.config import settings
 from app.schemas.stat import UploadResponse, MultipleUploadResponse, MediaFileItem, MediaListResponse
@@ -15,16 +17,45 @@ from app.schemas.stat import UploadResponse, MultipleUploadResponse, MediaFileIt
 router = APIRouter(prefix="/upload", tags=["Uploads & Media"])
 
 # extension allowlist used to reject anything that is not an accepted media format
-IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif"}
-VIDEO_EXTENSIONS = {".mp4", ".webm"}
+IMAGE_EXTENSIONS = {
+    ".jpg", ".jpeg", ".png", ".webp", ".svg", ".gif", ".bmp", ".tif", ".tiff",
+    ".avif", ".ico", ".jfif", ".heic", ".heif",
+}
+VIDEO_EXTENSIONS = {".mp4", ".webm", ".mov"}
 ALLOWED_EXTENSIONS = IMAGE_EXTENSIONS | VIDEO_EXTENSIONS
 
+# A stored filename suffix must be a plain short token (no path, no dots).
+_SAFE_EXT = re.compile(r"^\.[a-z0-9]{1,8}$")
 
-def max_upload_size_mb(ext: str) -> int:
+
+def classify_media(ext: str, content_type: Optional[str]) -> Optional[str]:
+    """Return "image" | "video" | None for an uploaded file.
+
+    Extension wins, but a browser-declared MIME type also counts so unfamiliar
+    extensions (`.heic` from phones, `.jfif`, `.avif`…) are accepted as long
+    as they arrive as `image/*` / `video/*`."""
+    ctype = (content_type or "").split(";")[0].strip().lower()
+    if ext in VIDEO_EXTENSIONS or ctype.startswith("video/"):
+        return "video"
+    if ext in IMAGE_EXTENSIONS or ctype.startswith("image/"):
+        return "image"
+    return None
+
+
+def resolve_extension(ext: str, content_type: Optional[str]) -> str:
+    """Pick a safe filename suffix: the original one when it is a plain token,
+    otherwise the best guess for the declared MIME type ("" = unsupported)."""
+    if _SAFE_EXT.match(ext or ""):
+        return ext
+    guessed = mimetypes.guess_extension((content_type or "").split(";")[0].strip())
+    return guessed if guessed and _SAFE_EXT.match(guessed) else ""
+
+
+def max_upload_size_mb(kind: str) -> int:
     """Per-type upload limit in MB: videos get the larger allowance."""
     return (
         settings.MAX_VIDEO_UPLOAD_SIZE_MB
-        if ext in VIDEO_EXTENSIONS
+        if kind == "video"
         else settings.MAX_UPLOAD_SIZE_MB
     )
 
@@ -40,21 +71,31 @@ def get_file_url(request: Request, filename: str) -> str:
 
 @router.post("/image", response_model=UploadResponse, summary="Upload single image or media file")
 def upload_single_image(request: Request, file: UploadFile = File(...)):
-    """POST /upload/image — uploads one image file (admin CMS use);
+    """POST /upload/image — uploads one image or video file (admin CMS use);
     returns 201 by default via the UploadResponse payload, 400 for bad
     extension or oversize, 500 on storage failure."""
     ext = Path(file.filename or "").suffix.lower()
-    if ext not in ALLOWED_EXTENSIONS:
+    kind = classify_media(ext, file.content_type)
+    if kind is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Unsupported file extension '{ext}'. Allowed: {', '.join(ALLOWED_EXTENSIONS)}"
+            detail=f"Unsupported file '{file.filename}'. Allowed images: {', '.join(sorted(IMAGE_EXTENSIONS))}; videos: {', '.join(sorted(VIDEO_EXTENSIONS))}"
+        )
+
+    # normalise the suffix when the extension is unknown but the MIME type is a
+    # recognised image/video (e.g. phone `.heic` uploads)
+    ext = resolve_extension(ext, file.content_type)
+    if not ext:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Unsupported file extension '{Path(file.filename or '').suffix.lower()}'"
         )
 
     contents = file.file.read()
     file_size = len(contents)
 
     # enforce the size limit after reading (UploadFile has no reliable pre-size)
-    limit_mb = max_upload_size_mb(ext)
+    limit_mb = max_upload_size_mb(kind)
     max_bytes = limit_mb * 1024 * 1024
     if file_size > max_bytes:
         raise HTTPException(
@@ -91,13 +132,18 @@ def upload_multiple_images(request: Request, files: List[UploadFile] = File(...)
 
     for file in files:
         ext = Path(file.filename or "").suffix.lower()
-        if ext not in ALLOWED_EXTENSIONS:
+        kind = classify_media(ext, file.content_type)
+        if kind is None:
             continue  # skip bad file, keep processing the rest of the batch
+
+        ext = resolve_extension(ext, file.content_type)
+        if not ext:
+            continue
 
         try:
             contents = file.file.read()
             file_size = len(contents)
-            max_bytes = max_upload_size_mb(ext) * 1024 * 1024
+            max_bytes = max_upload_size_mb(kind) * 1024 * 1024
             if file_size > max_bytes:
                 continue
             unique_filename = storage.save_file(contents, ext, file.content_type)

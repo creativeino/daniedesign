@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import Link from "next/link";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { useRef } from "react";
@@ -93,7 +93,7 @@ const StickyCard_001 = ({
             >
               <div className="absolute inset-[-4%] overflow-hidden">
                 <motion.div style={{ y: imgY }} className="h-full w-full">
-                  <Image
+                  <MediaImage
                     src={src}
                     alt={title}
                     fill

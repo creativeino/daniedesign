@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "@/lib/gsap";
 import { isVideoUrl } from "@/lib/utils";
+import MediaImage from "@/components/shared/MediaImage";
 import RollNumber from "@/components/animations/RollNumber";
 import { X, ArrowLeft, ArrowRight, ZoomIn, Play } from "lucide-react";
 
@@ -188,7 +188,7 @@ export default function GalleryDeck({ images, title }: GalleryDeckProps) {
                     className="h-full w-full object-cover grayscale contrast-[1.15] brightness-[0.8] transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.05] group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100"
                   />
                 ) : (
-                  <Image
+                  <MediaImage
                     src={image}
                     alt={`${title} — gallery image ${i + 1}`}
                     fill
@@ -316,7 +316,7 @@ export default function GalleryDeck({ images, title }: GalleryDeckProps) {
                   className="h-full w-full bg-black object-contain"
                 />
               ) : (
-                <Image
+                <MediaImage
                   src={images[lightboxIndex]}
                   alt={`${title} — gallery image ${lightboxIndex + 1}`}
                   fill

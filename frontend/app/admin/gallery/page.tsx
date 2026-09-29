@@ -3,31 +3,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import { ImageIcon, Plus, Trash2, UploadCloud, Loader2 } from "lucide-react";
+import MediaImage from "@/components/shared/MediaImage";
+import { Trash2, UploadCloud, Loader2 } from "lucide-react";
 import { getGalleryImages, createGalleryImage, deleteGalleryImage, uploadImage } from "@/lib/api";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+type GalleryImage = { id: number; src: string; alt: string };
+
 export default function AdminGalleryPage() {
-  const [images, setImages] = useState<any[]>([]);
+  const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [alt, setAlt] = useState("");
   const [src, setSrc] = useState("");
   const [uploading, setUploading] = useState(false);
   const [adding, setAdding] = useState(false);
 
-  const fetchGallery = async () => {
-    setLoading(true);
-    try {
-      const data = await getGalleryImages();
-      setImages(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  const fetchGallery = () => {
+    getGalleryImages()
+      .then((data) => setImages(data))
+      .catch((e) => console.error(e))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -43,8 +40,8 @@ export default function AdminGalleryPage() {
     try {
       const res = await uploadImage(file);
       setSrc(res.url);
-    } catch (err: any) {
-      alert(err.message || "Failed to upload photo");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to upload photo");
     } finally {
       setUploading(false);
     }
@@ -61,9 +58,10 @@ export default function AdminGalleryPage() {
       await createGalleryImage({ src, alt });
       setSrc("");
       setAlt("");
+      setLoading(true);
       await fetchGallery();
-    } catch (err: any) {
-      alert(err.message || "Failed to add image");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to add image");
     } finally {
       setAdding(false);
     }
@@ -75,8 +73,8 @@ export default function AdminGalleryPage() {
     try {
       await deleteGalleryImage(id);
       setImages((prev) => prev.filter((img) => img.id !== id));
-    } catch (err: any) {
-      alert(err.message || "Failed to delete image");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete image");
     }
   };
 
@@ -160,7 +158,7 @@ export default function AdminGalleryPage() {
               className="p-2.5 flex flex-col justify-between hover:border-accent/40 transition-all"
             >
               <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden bg-black/40 border border-white/5 mb-2">
-                <Image src={img.src} alt={img.alt} fill className="object-cover" />
+                <MediaImage src={img.src} alt={img.alt} fill className="object-cover" />
               </div>
               <p className="font-mono text-[10px] text-white/60 truncate">{img.alt}</p>
               <div className="border-t border-white/5 pt-1.5 mt-2 flex justify-end">

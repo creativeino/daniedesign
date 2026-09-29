@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
+import MediaImage from "@/components/shared/MediaImage";
 import { motion } from "framer-motion";
 import SplitText from "@/components/animations/SplitText";
 import TiltCard from "@/components/animations/TiltCard";
@@ -166,7 +166,7 @@ export default function AgencyIntro() {
           >
             <div className="relative aspect-[16/10] w-full overflow-hidden rounded-3xl border border-white/10 bg-card md:aspect-[4/3]">
               {galleryImages.map((img, i) => (
-                <Image
+                <MediaImage
                   key={img.src}
                   src={img.src}
                   alt={img.alt}

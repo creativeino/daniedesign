@@ -17,6 +17,8 @@ export type Project = {
   image: string;
   services: string[];
   featured?: boolean;
+  /** Manual display position (1 = first); lower numbers appear before higher ones. */
+  order?: number;
   challenge: string;
   approach: string;
   design: string;
