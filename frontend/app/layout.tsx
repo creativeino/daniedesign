@@ -55,8 +55,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       data-scroll-behavior="smooth"
       className={`${sora.variable} ${roboto.variable} ${plexMono.variable}`}
     >
-      {/* suppressHydrationWarning: extensions (e.g. Grammarly) inject
-          attributes into <body> before React hydrates. */}
       <body className="min-h-screen antialiased" suppressHydrationWarning>
         <SiteShell>{children}</SiteShell>
         {/* Google Analytics (gtag.js) — loaded after hydration, production only,
