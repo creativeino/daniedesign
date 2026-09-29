@@ -71,6 +71,7 @@ export default function BlogForm({ initialData, isEdit = false }: Props) {
   // failures surface via the shared `error` banner instead of an alert().
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
 
     setUploadingCover(true);
