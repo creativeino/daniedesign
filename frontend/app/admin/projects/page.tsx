@@ -60,9 +60,18 @@ export default function AdminProjectsPage() {
     if (reordering) return;
     const before = projects;
     const visibleSlugs = new Set(filtered.map((p) => p.slug));
-    const reordered = new Map(newVisible.map((p) => [p.slug, p]));
 
-    const merged = before.map((p) => (visibleSlugs.has(p.slug) ? reordered.get(p.slug)! : p));
+    // Slots occupied by visible cards in the full list (hidden/filter-excluded
+    // projects keep their relative position); write the reordered sequence into
+    // exactly those slots — mapping over `before` instead would drop the swap.
+    const visibleSlots = before.flatMap((p, idx) => (visibleSlugs.has(p.slug) ? [idx] : []));
+    if (visibleSlots.length !== newVisible.length) return;
+
+    const merged = [...before];
+    visibleSlots.forEach((slot, i) => {
+      merged[slot] = newVisible[i];
+    });
+
     const previousOrder = new Map(before.map((p) => [p.slug, p.order ?? 0]));
     const renumbered = merged.map((p, idx) => ({ ...p, order: idx + 1 }));
     const changed = renumbered.filter((p) => (p.order ?? 0) !== previousOrder.get(p.slug));
