@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "@/lib/gsap";
 import { isVideoUrl } from "@/lib/utils";
 import MediaImage from "@/components/shared/MediaImage";
+import MediaVideo from "@/components/shared/MediaVideo";
 import RollNumber from "@/components/animations/RollNumber";
 import { X, ArrowLeft, ArrowRight, ZoomIn, Play } from "lucide-react";
 
@@ -179,13 +180,14 @@ export default function GalleryDeck({ images, title }: GalleryDeckProps) {
                 className="group relative aspect-[4/5] w-[78vw] shrink-0 snap-center overflow-hidden rounded-2xl border border-ink/10 transition-all duration-500 hover:border-accent/30 cursor-pointer sm:w-[56vw] md:w-[42vw] lg:aspect-[3/4] lg:w-[34vw] lg:max-w-[520px]"
               >
                 {isVideoUrl(image) ? (
-                  <video
+                  <MediaVideo
                     src={image}
                     muted
                     loop
                     playsInline
                     preload="metadata"
-                    className="h-full w-full object-cover grayscale contrast-[1.15] brightness-[0.8] transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.05] group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100"
+                    buttonClassName="right-3 top-3"
+                    className="object-cover grayscale contrast-[1.15] brightness-[0.8] transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.05] group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100"
                   />
                 ) : (
                   <MediaImage
@@ -307,13 +309,14 @@ export default function GalleryDeck({ images, title }: GalleryDeckProps) {
             {/* Image / Video */}
             <div className="relative h-full w-full overflow-hidden rounded-lg">
               {isVideoUrl(images[lightboxIndex]) ? (
-                <video
+                <MediaVideo
                   key={`video-${lightboxIndex}`}
                   src={images[lightboxIndex]}
                   controls
                   autoPlay
                   playsInline
-                  className="h-full w-full bg-black object-contain"
+                  buttonClassName="bottom-20 right-5 md:bottom-24 md:right-6"
+                  className="bg-black object-contain"
                 />
               ) : (
                 <MediaImage

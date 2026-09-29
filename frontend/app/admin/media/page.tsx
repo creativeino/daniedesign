@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import MediaImage from "@/components/shared/MediaImage";
+import MediaVideo from "@/components/shared/MediaVideo";
 import {
   UploadCloud,
   Copy,
@@ -130,11 +131,10 @@ export default function AdminMediaPage() {
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-black/40 border border-white/5">
                   {isVideo(file.content_type) ? (
-                    <video
+                    <MediaVideo
                       src={file.url}
-                      className="h-full w-full object-cover"
-                      controls
-                      preload="metadata"
+                      buttonClassName="bottom-2 right-2"
+                      className="object-cover"
                     />
                   ) : (
                     <MediaImage src={file.url} alt={file.filename} fill className="object-cover" />

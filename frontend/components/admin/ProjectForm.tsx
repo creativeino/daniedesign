@@ -19,6 +19,7 @@ import {
 import { createProject, updateProject, uploadImage, uploadMultipleImages } from "@/lib/api";
 import { isVideoUrl } from "@/lib/utils";
 import MediaImage from "@/components/shared/MediaImage";
+import MediaVideo from "@/components/shared/MediaVideo";
 import { Project } from "@/data/projects";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -429,7 +430,14 @@ export default function ProjectForm({ initialData, isEdit = false }: Props) {
                     className="group relative aspect-[4/3] rounded-lg overflow-hidden border border-white/10 bg-black/40"
                   >
                     {isVideoUrl(url) ? (
-                      <video src={url} muted playsInline preload="metadata" className="h-full w-full object-cover" />
+                      <MediaVideo
+                        src={url}
+                        muted
+                        playsInline
+                        preload="metadata"
+                        buttonClassName="bottom-2 right-2"
+                        className="object-cover"
+                      />
                     ) : (
                       <MediaImage src={url} alt={`Gallery ${idx + 1}`} fill className="object-cover" />
                     )}
