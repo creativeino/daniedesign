@@ -25,6 +25,23 @@ export function cn(...inputs: ClassValue[]) {
 const VIDEO_EXTENSIONS = [".mp4", ".webm", ".mov"];
 
 /**
+ * Resolve the stored media name behind a URL.
+ *
+ * Blob-proxied uploads (`/api/blob/file?p=<pathname>`) keep the real filename
+ * — extension included — in the query string, so look there first; everything
+ * else (backend `/uploads/<file>.jpg`, WordPress URLs…) uses the path.
+ *
+ * @param url Media URL.
+ * @returns The filename/URL to test extensions against.
+ */
+function mediaName(url: string): string {
+  const cut = url.search(/[?#]/);
+  if (cut === -1) return url;
+  const params = new URLSearchParams(url.slice(cut + 1));
+  return params.get("p") ?? params.get("url") ?? url.slice(0, cut);
+}
+
+/**
  * Detect whether a media URL points at a video file so gallery components
  * can render a `<video>` instead of `next/image`.
  *
@@ -33,8 +50,8 @@ const VIDEO_EXTENSIONS = [".mp4", ".webm", ".mov"];
  */
 export function isVideoUrl(url: string): boolean {
   if (!url) return false;
-  const path = url.split(/[?#]/)[0].toLowerCase();
-  return VIDEO_EXTENSIONS.some((ext) => path.endsWith(ext));
+  const name = mediaName(url).toLowerCase();
+  return VIDEO_EXTENSIONS.some((ext) => name.endsWith(ext));
 }
 
 /**
