@@ -37,7 +37,7 @@ export default function FeaturedWork() {
           </div>
           <div className="flex items-center gap-6 md:pb-2">
             <span className="display text-6xl font-medium text-outline md:text-7xl">
-              26
+              {projects.length > 0 ? projects.length : "—"}
             </span>
             <span className="max-w-[10rem] text-xs leading-relaxed text-muted">
               Projects delivered for brands in four countries
