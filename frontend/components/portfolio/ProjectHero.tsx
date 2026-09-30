@@ -1,6 +1,7 @@
 "use client";
 
 import MediaImage from "@/components/shared/MediaImage";
+import MediaVideo from "@/components/shared/MediaVideo";
 import { useRef } from "react";
 import {
   motion,
@@ -15,6 +16,8 @@ import SplitText from "@/components/animations/SplitText";
 
 type ProjectHeroProps = {
   image: string;
+  /** Gallery video shown as the animated hero cover (cover image stays as poster). */
+  video?: string;
   title: string;
   category: string;
   year: string;
@@ -24,6 +27,7 @@ type ProjectHeroProps = {
 
 export default function ProjectHero({
   image,
+  video,
   title,
   category,
   year,
@@ -78,14 +82,28 @@ export default function ProjectHero({
           }}
           className="relative h-full w-full"
         >
-          <MediaImage
-            src={image}
-            alt={`${title} — main visual`}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-[center_30%] blur-sm"
-          />
+          {video ? (
+            <MediaVideo
+              src={video}
+              poster={image}
+              fill
+              autoPlay
+              muted
+              loop
+              preload="auto"
+              buttonClassName="right-5 top-5 md:right-8 md:top-8"
+              className="object-cover object-[center_30%]"
+            />
+          ) : (
+            <MediaImage
+              src={image}
+              alt={`${title} — main visual`}
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-[center_30%] blur-sm"
+            />
+          )}
         </motion.div>
       </motion.div>
 

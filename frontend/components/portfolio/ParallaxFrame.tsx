@@ -1,12 +1,15 @@
 "use client";
 
 import MediaImage from "@/components/shared/MediaImage";
+import MediaVideo from "@/components/shared/MediaVideo";
 import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import FadeUp from "@/components/animations/FadeUp";
 
 type ParallaxFrameProps = {
   src: string;
+  /** Project gallery video shown in place of the still (src stays as poster). */
+  video?: string;
   alt: string;
   caption?: string;
   /** Rendered height ratio, e.g. "16/9". */
@@ -20,15 +23,17 @@ type ParallaxFrameProps = {
  * inside drifts bottom-to-top as the section crosses the viewport — the
  * classic gallery-plate move. Respects prefers-reduced-motion (static frame).
  */
-export default function ParallaxFrame({ src, alt, caption, aspect = "16/7" }: ParallaxFrameProps) {
+export default function ParallaxFrame({ src, video, alt, caption, aspect = "16/7" }: ParallaxFrameProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
+  // Parallax/Ken Burns target the media wrapper (not the <img> itself) so a
+  // video cover gets the same drift without needing a DOM ref into MediaVideo.
+  const mediaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
     const frame = frameRef.current;
-    const img = imgRef.current;
+    const img = mediaRef.current;
     if (!section || !frame || !img) return;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -93,15 +98,27 @@ export default function ParallaxFrame({ src, alt, caption, aspect = "16/7" }: Pa
               className="group relative overflow-hidden rounded-2xl border border-ink/10 bg-panel"
               style={{ aspectRatio: aspect }}
             >
-              <div className="absolute -inset-y-[12%] inset-x-0">
-                <MediaImage
-                  ref={imgRef}
-                  src={src}
-                  alt={alt}
-                  fill
-                  sizes="(min-width: 1024px) 80vw, 100vw"
-                  className="object-cover will-change-transform"
-                />
+              <div ref={mediaRef} className="absolute -inset-y-[12%] inset-x-0 will-change-transform">
+                {video ? (
+                  <MediaVideo
+                    src={video}
+                    poster={src}
+                    fill
+                    muted
+                    loop
+                    preload="metadata"
+                    buttonClassName="bottom-6 right-6"
+                    className="object-cover will-change-transform"
+                  />
+                ) : (
+                  <MediaImage
+                    src={src}
+                    alt={alt}
+                    fill
+                    sizes="(min-width: 1024px) 80vw, 100vw"
+                    className="object-cover will-change-transform"
+                  />
+                )}
               </div>
 
               {/* Corner crop marks */}

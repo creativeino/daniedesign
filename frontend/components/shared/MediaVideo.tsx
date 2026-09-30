@@ -11,6 +11,8 @@ import { Pause, Play } from "lucide-react";
 type Props = {
   /** Media URL (backend upload or Blob-proxied). */
   src: string;
+  /** Cover image shown until playback starts (falls back when video is loading). */
+  poster?: string;
   /** Classes applied to the <video> element (object-fit, filters…). */
   className?: string;
   /** Position the wrapper absolutely inside a relative parent (matches MediaImage). */
@@ -31,6 +33,7 @@ type Props = {
 
 export default function MediaVideo({
   src,
+  poster,
   className = "",
   fill = false,
   autoPlay,
@@ -47,7 +50,8 @@ export default function MediaVideo({
   const [playing, setPlaying] = useState(false);
 
   const toggle = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // Keep the click from bubbling into gallery/lightbox click handlers.
+    // Keep the click from bubbling into gallery/lightbox/Link navigation.
+    e.preventDefault();
     e.stopPropagation();
     const video = videoRef.current;
     if (!video) return;
@@ -60,6 +64,7 @@ export default function MediaVideo({
       <video
         ref={videoRef}
         src={src}
+        poster={poster}
         autoPlay={autoPlay}
         loop={loop}
         muted={muted}

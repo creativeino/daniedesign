@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import MediaImage from "@/components/shared/MediaImage";
+import MediaVideo from "@/components/shared/MediaVideo";
+import { isVideoUrl } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/data/projects";
 import TiltCard from "@/components/animations/TiltCard";
@@ -13,6 +15,10 @@ type ProjectCardProps = {
 };
 
 export default function ProjectCard({ project, className, imgSizes }: ProjectCardProps) {
+  // A gallery video doubles as the animated card cover; the cover image stays
+  // as the poster so nothing is lost while the video loads.
+  const coverVideo = project.gallery?.find((url) => isVideoUrl(url));
+
   return (
     <TiltCard
       className={className}
@@ -27,14 +33,28 @@ export default function ProjectCard({ project, className, imgSizes }: ProjectCar
       >
         {/* Image area — fixed aspect ratio */}
         <div className="relative aspect-[4/3] w-full overflow-hidden">
-          <MediaImage
-            src={project.image}
-            alt={project.title}
-            fill
-            sizes={imgSizes ?? "(min-width: 1024px) 50vw, 100vw"}
-            className="object-cover grayscale contrast-[1.15] brightness-[0.82] transition-all duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-panel via-panel/20 to-transparent" />
+          {coverVideo ? (
+            <MediaVideo
+              src={coverVideo}
+              poster={project.image}
+              fill
+              autoPlay
+              muted
+              loop
+              preload="metadata"
+              buttonClassName="bottom-3 right-3"
+              className="object-cover grayscale contrast-[1.15] brightness-[0.82] transition-all duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100"
+            />
+          ) : (
+            <MediaImage
+              src={project.image}
+              alt={project.title}
+              fill
+              sizes={imgSizes ?? "(min-width: 1024px) 50vw, 100vw"}
+              className="object-cover grayscale contrast-[1.15] brightness-[0.82] transition-all duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100"
+            />
+          )}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-panel via-panel/20 to-transparent" />
 
           {/* Category pill */}
           <div className="absolute left-4 top-4 z-10">

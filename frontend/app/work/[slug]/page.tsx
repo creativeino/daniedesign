@@ -15,6 +15,7 @@ import ParallaxFrame from "@/components/portfolio/ParallaxFrame";
 import ImpactBand, { type ProjectStat } from "@/components/portfolio/ImpactBand";
 import ChapterRail from "@/components/portfolio/ChapterRail";
 import MediaImage from "@/components/shared/MediaImage";
+import { isVideoUrl } from "@/lib/utils";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -83,12 +84,17 @@ export default async function ProjectPage({ params }: Props) {
   const stats = outcome ? extractStats(outcome) : [];
   const chapters = steps.map((s) => ({ key: s.key, label: s.label }));
 
+  // Gallery video doubles as the project's animated cover (hero + plate);
+  // the cover image stays as its poster.
+  const coverVideo = project.gallery?.find((url) => isVideoUrl(url));
+
   return (
     <main>
       <ScrollProgress />
 
       <ProjectHero
         image={project.image}
+        video={coverVideo}
         title={project.title}
         category={project.category}
         year={project.year}
@@ -121,6 +127,7 @@ export default async function ProjectPage({ params }: Props) {
       {project.image && (
         <ParallaxFrame
           src={project.image}
+          video={coverVideo}
           alt={`${project.title} — full project view`}
           caption={`${project.title} — ${project.year}`}
         />

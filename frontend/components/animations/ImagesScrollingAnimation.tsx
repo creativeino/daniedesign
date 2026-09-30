@@ -1,11 +1,13 @@
 "use client";
 
 import MediaImage from "@/components/shared/MediaImage";
+import MediaVideo from "@/components/shared/MediaVideo";
 import Link from "next/link";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Project } from "@/data/projects";
+import { isVideoUrl } from "@/lib/utils";
 import TiltCard from "@/components/animations/TiltCard";
 
 /**
@@ -21,6 +23,7 @@ const StickyCard_001 = ({
   category,
   year,
   src,
+  video,
   slug,
   progress,
 }: {
@@ -30,6 +33,7 @@ const StickyCard_001 = ({
   category: string;
   year: string;
   src: string;
+  video?: string;
   slug: string;
   progress: ReturnType<typeof useScroll>["scrollYProgress"];
 }) => {
@@ -93,13 +97,27 @@ const StickyCard_001 = ({
             >
               <div className="absolute inset-[-4%] overflow-hidden">
                 <motion.div style={{ y: imgY }} className="h-full w-full">
-                  <MediaImage
-                    src={src}
-                    alt={title}
-                    fill
-                    sizes="(min-width: 1280px) 1160px, (min-width: 1024px) 1020px, (min-width: 768px) 800px, 620px"
-                    className="photo-duo object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
-                  />
+                  {video ? (
+                    <MediaVideo
+                      src={video}
+                      poster={src}
+                      fill
+                      autoPlay
+                      muted
+                      loop
+                      preload="metadata"
+                      className="object-cover"
+                      buttonClassName="bottom-4 right-4"
+                    />
+                  ) : (
+                    <MediaImage
+                      src={src}
+                      alt={title}
+                      fill
+                      sizes="(min-width: 1280px) 1160px, (min-width: 1024px) 1020px, (min-width: 768px) 800px, 620px"
+                      className="photo-duo object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                    />
+                  )}
                 </motion.div>
               </div>
               <div
@@ -162,6 +180,7 @@ const ImagesScrollingAnimation = ({ projects }: { projects: Project[] }) => {
           category={project.category}
           year={project.year}
           src={project.image}
+          video={project.gallery?.find((url) => isVideoUrl(url))}
           slug={project.slug}
           progress={smooth}
         />
