@@ -76,9 +76,14 @@ export async function GET(request: Request) {
       const value = result.headers.get(name);
       if (value) headers.set(name, value);
     }
+    // Uploads use addRandomSuffix (see app/api/blob/route.ts), so a pathname's
+    // bytes never change — safe to mark immutable and cache for a year at both
+    // the browser (max-age) and Vercel's edge CDN (s-maxage). Without s-maxage
+    // the edge ignored this and every visitor re-pulled from Blob, which is what
+    // burned the 10 GB/month data-transfer allowance.
     headers.set(
       "cache-control",
-      "public, max-age=86400, stale-while-revalidate=604800"
+      "public, max-age=31536000, s-maxage=31536000, stale-while-revalidate=604800, immutable"
     );
 
     const status = result.headers.get("content-range") ? 206 : 200;

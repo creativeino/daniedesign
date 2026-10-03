@@ -90,7 +90,7 @@ export default function ProjectHero({
               autoPlay
               muted
               loop
-              preload="auto"
+              preload="metadata"
               buttonClassName="right-5 top-5 md:right-8 md:top-8"
               className="object-cover object-[center_30%]"
             />
