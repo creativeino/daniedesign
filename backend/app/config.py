@@ -48,6 +48,11 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
 
+    # Resend transactional email — API key must come from the environment
+    RESEND_API_KEY: str = ""
+    RESEND_TO_EMAIL: str = "daniedesignz@gmail.com"
+    RESEND_FROM_EMAIL: str = "onboarding@resend.dev"
+
     @property
     def cors_origin_list(self) -> List[str]:
         """CORS_ORIGINS as a list, dropping any blank entries."""

@@ -1,21 +1,34 @@
 """Contact form router: public inquiry submission plus admin triage endpoints."""
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
+from app.email import InquiryEmail, send_inquiry_notification
 from app.models.contact import ContactSubmission
 from app.schemas.stat import ContactCreate, ContactResponse
 
 router = APIRouter(prefix="/contact", tags=["Contact Inquiries"])
 
 @router.post("", response_model=ContactResponse, status_code=status.HTTP_201_CREATED, summary="Submit inquiry")
-def submit_contact_form(contact_in: ContactCreate, db: Session = Depends(get_db)):
+def submit_contact_form(contact_in: ContactCreate, background: BackgroundTasks, db: Session = Depends(get_db)):
     """POST /contact — public endpoint for the website contact form; stores
-    the inquiry with a default status and returns 201."""
+    the inquiry with a default status and returns 201, then notifies the
+    site owner via Resend (best-effort, off the response path)."""
     submission = ContactSubmission(**contact_in.model_dump())
     db.add(submission)
     db.commit()
     db.refresh(submission)
+    background.add_task(
+        send_inquiry_notification,
+        InquiryEmail(
+            submission_id=submission.id,
+            name=submission.name,
+            email=submission.email,
+            service=submission.service,
+            company=submission.company,
+            message=submission.message,
+        ),
+    )
     return submission
 
 @router.get("", response_model=List[ContactResponse], summary="Get inquiries")
