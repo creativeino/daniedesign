@@ -12,9 +12,9 @@ import { loginAdmin, getAdminToken } from "@/lib/api";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  // Prefilled demo credentials (replace with real admin account in production).
-  const [email, setEmail] = useState("admin@daniedesign.com");
-  const [password, setPassword] = useState("admin123456");
+  // Start with empty fields — credentials are never prefilled or displayed.
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -103,7 +103,7 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@daniedesign.com"
+                  placeholder="you@example.com"
                   className="w-full rounded-2xl border border-white/[0.09] bg-[#0e0e0e] py-3 pl-11 pr-4 font-mono text-xs text-[#f4f2ee] placeholder:text-white/20 focus:border-[#ff4d1f] focus:outline-none focus:ring-1 focus:ring-[#ff4d1f] transition-all"
                 />
               </div>
@@ -124,11 +124,6 @@ export default function AdminLoginPage() {
                   className="w-full rounded-2xl border border-white/[0.09] bg-[#0e0e0e] py-3 pl-11 pr-4 font-mono text-xs text-[#f4f2ee] placeholder:text-white/20 focus:border-[#ff4d1f] focus:outline-none focus:ring-1 focus:ring-[#ff4d1f] transition-all"
                 />
               </div>
-            </div>
-
-            <div className="flex items-center justify-between font-mono text-[10px] text-[#9a968e] pt-1">
-              <span>admin@daniedesign.com</span>
-              <span className="text-[#ff4d1f]">admin123456</span>
             </div>
 
             <button
