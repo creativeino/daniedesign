@@ -6,7 +6,7 @@
 import { v2 as cloudinary } from "cloudinary";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-const MAX_RESULTS = 100;
+const MAX_RESULTS = 500; // Cloudinary Admin API cap; library now holds 300+ assets
 
 /** Verify the caller holds a valid admin JWT (checked by the FastAPI backend). */
 async function isAdmin(authorization: string | null): Promise<boolean> {

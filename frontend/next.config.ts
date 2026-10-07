@@ -2,9 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // Dev-only: the FastAPI backend serves /uploads from localhost, which
-    // Next 16's image optimizer blocks by default (private-IP SSRF guard).
-    dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",
     remotePatterns: [
       {
         protocol: "https",
@@ -22,19 +19,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
-      },
-      // Deployed FastAPI backend — serves legacy DB-stored /uploads files.
-      {
-        protocol: "https",
-        hostname: "*.vercel.app",
-      },
-      {
-        protocol: "http",
-        hostname: "localhost",
-      },
-      {
-        protocol: "http",
-        hostname: "127.0.0.1",
       },
     ],
   },
