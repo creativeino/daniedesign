@@ -9,3 +9,7 @@ next-env.d.ts
 .env*
 .vercel
 .DS_Store
+
+# local scratch (cPanel upload zip + screenshots) — never commit
+frontend/frontend.zip
+frontend/FullPagePlus*.jpg
