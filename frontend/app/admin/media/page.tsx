@@ -1,9 +1,10 @@
-// Media library / uploader — batch-upload images and videos to the backend,
-// then copy their direct URLs for use in other admin forms. Upload history
-// lives only in component state (per session, not persisted).
+// Media library / uploader — batch-upload images and videos directly to
+// Cloudinary, then copy their direct URLs for use in other admin forms.
+// The persisted library is loaded from Cloudinary on mount; this session's
+// uploads are merged in front of it.
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MediaImage from "@/components/shared/MediaImage";
 import MediaVideo from "@/components/shared/MediaVideo";
 import {
@@ -13,15 +14,15 @@ import {
   ExternalLink,
   FileImage,
 } from "lucide-react";
-import { uploadMultipleImages, UploadedMediaItem } from "@/lib/api";
+import { listMedia, uploadMultipleImages, UploadedMediaItem, MediaFileItem } from "@/lib/api";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-// Client-side limits — must match backend config (MAX_UPLOAD_SIZE_MB /
-// MAX_VIDEO_UPLOAD_SIZE_MB) so oversized files fail fast instead of after
-// the whole upload has been sent.
-const MAX_IMAGE_MB = 25;
-const MAX_VIDEO_MB = 160;
+// Client-side limits — match the Cloudinary Free plan caps (max image 10MB,
+// max video 100MB) so oversized files fail fast instead of after the whole
+// upload has been sent.
+const MAX_IMAGE_MB = 10;
+const MAX_VIDEO_MB = 100;
 const VIDEO_EXTS = [".mp4", ".webm"];
 
 const formatSize = (bytes: number) =>
@@ -36,8 +37,23 @@ const isVideo = (nameOrType: string) => {
 
 export default function AdminMediaPage() {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedMediaItem[]>([]);
+  const [library, setLibrary] = useState<MediaFileItem[]>([]);
   const [uploading, setUploading] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+
+  // Load the persisted Cloudinary library once (best-effort — if it fails,
+  // this session's uploads still render below).
+  useEffect(() => {
+    listMedia()
+      .then(setLibrary)
+      .catch(() => setLibrary([]));
+  }, []);
+
+  // Session uploads first, then the persisted library (deduped by URL).
+  const shown: (UploadedMediaItem & { modified_at?: string })[] = [
+    ...uploadedFiles,
+    ...library.filter((item) => !uploadedFiles.some((u) => u.url === item.url)),
+  ];
 
   // Send all picked files as multipart form data; newest results are prepended.
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,7 +97,7 @@ export default function AdminMediaPage() {
           Media Library &amp; Uploader
         </h1>
         <p className="text-xs text-white/50 mt-1">
-          Upload media directly to the FastAPI server. Copy direct URLs to use anywhere.
+          Upload media directly to Cloudinary. Copy direct URLs to use anywhere.
         </p>
       </div>
 
@@ -102,7 +118,7 @@ export default function AdminMediaPage() {
             <UploadCloud className="h-6 w-6" />
           </div>
           <h3 className="text-base font-bold text-white">
-            {uploading ? "Uploading Assets to Server..." : "Click or Drag Files Here to Upload"}
+            {uploading ? "Uploading Assets to Cloudinary..." : "Click or Drag Files Here to Upload"}
           </h3>
           <p className="text-xs text-white/40 leading-relaxed font-mono">
             Images up to {MAX_IMAGE_MB}MB; MP4 and WEBM videos up to {MAX_VIDEO_MB}MB per file.
@@ -113,18 +129,18 @@ export default function AdminMediaPage() {
       {/* Uploaded Files Section */}
       <div>
         <h2 className="text-base font-bold text-white mb-3">
-          Session Uploads ({uploadedFiles.length})
+          Media Library ({shown.length})
         </h2>
 
-        {uploadedFiles.length === 0 ? (
+        {shown.length === 0 ? (
           <Card className="p-10 text-center">
             <FileImage className="mx-auto h-7 w-7 text-white/20 mb-2" />
-            <p className="text-xs font-semibold text-white">No files uploaded in this session</p>
+            <p className="text-xs font-semibold text-white">No files in the library yet</p>
             <p className="text-[11px] text-white/40 mt-0.5">Use the box above to upload new images or videos.</p>
           </Card>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {uploadedFiles.map((file, idx) => (
+            {shown.map((file, idx) => (
               <Card
                 key={idx}
                 className="p-3 hover:border-accent/40 transition-all space-y-2.5"

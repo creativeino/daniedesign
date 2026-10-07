@@ -68,14 +68,20 @@ app = FastAPI(
 # environment variable cannot accidentally block the deployed CMS.
 production_origins = list(dict.fromkeys([
     *settings.cors_origin_list,
+    # Current production frontend (Sarfraz Vercel account).
+    "https://daniedesign-six.vercel.app",
+    # Transitional — old account's domains, removable once it is retired.
     "https://daniedesign.vercel.app",
-    # Vercel preview deployments use a random subdomain; allow the current
-    # preview host so admin forms can upload media while a PR is being tested.
     "https://daniedesign-3zq6.vercel.app",
 ]))
+# Preview deployments get generated hosts
+# (daniedesign-git-<branch>-<team>.vercel.app / daniedesign-<id>-<team>.vercel.app);
+# cover this project's previews so admin uploads work while testing PRs.
+preview_origin_regex = r"^https://daniedesign(-git-[\w-]+|-[0-9a-z]+)?-sarfraz-ahmads-projects-39784d47\.vercel\.app$"
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"] if settings.ENVIRONMENT == "development" else production_origins,
+    allow_origin_regex=preview_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

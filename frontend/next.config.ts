@@ -18,16 +18,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "daniedesign.com",
       },
-      // Deployed FastAPI backend (Vercel) serves DB-stored uploads from here.
-      // Narrow to the exact backend hostname (e.g. "daniedesign-backend.vercel.app") once deployed.
+      // Cloudinary — where all admin uploads (images + videos) are stored.
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      // Deployed FastAPI backend — serves legacy DB-stored /uploads files.
       {
         protocol: "https",
         hostname: "*.vercel.app",
-      },
-      // Vercel Blob store — where new admin uploads (images + videos) are kept.
-      {
-        protocol: "https",
-        hostname: "*.public.blob.vercel-storage.com",
       },
       {
         protocol: "http",
