@@ -13,7 +13,7 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
     // Plain-Node cPanel entry — intentionally CommonJS, not app source.
-    "app.js",
+    "server.js",
   ]),
 ]);
 
