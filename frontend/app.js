@@ -1,6 +1,3 @@
-// cPanel / Namecheap Node.js entry point (Passenger runs this file).
-// Vercel ignores it — production there keeps using `next build` + `next start`.
-// Local/standard flow is unchanged (`npm run dev` / `npm start`).
 const { createServer } = require("http");
 const next = require("next");
 
