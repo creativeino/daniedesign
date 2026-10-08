@@ -7,7 +7,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   // Custom server runs outside the Next.js compiler, so it stays CommonJS.
   {
-    files: ["app.js"],
+    files: ["server.js"],
     rules: {
       "@typescript-eslint/no-require-imports": "off",
     },
