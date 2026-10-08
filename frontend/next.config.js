@@ -1,7 +1,9 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
+    // Host ka glibc purana hai (GLIBC_2.29 missing), sharp/SWC native
+    // binaries fail hote hain, isliye optimization band rakhi hai.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -30,4 +32,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
