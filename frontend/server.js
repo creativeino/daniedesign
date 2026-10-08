@@ -3,7 +3,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 const fs = require('fs')
 const path = require('path')
 
-const port = parseInt(process.env.PORT, 10) || 3000
+const port = parseInt(process.env.PORT, 10) || 3001
 const hostname = process.env.HOSTNAME || '0.0.0.0'
 
 // If standalone server exists, delegate execution to it to avoid Wasm memory overhead
