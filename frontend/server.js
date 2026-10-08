@@ -1,49 +1,55 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
-const { createServer } = require('http')
-const { parse } = require('url')
-const next = require('next')
+const fs = require('fs')
+const path = require('path')
 
-const dev = process.env.NODE_ENV !== 'production'
-const hostname = 'localhost'
-const port = process.env.PORT || 3000
-// when using middleware `hostname` and `port` must be provided below
-const app = next({ dev, hostname, port })
-const handle = app.getRequestHandler()
+const port = parseInt(process.env.PORT, 10) || 3000
+const hostname = process.env.HOSTNAME || '0.0.0.0'
 
-console.log(
-  `> next@${require('next/package.json').version} | node ${process.version} | cwd ${process.cwd()} | port ${port}`
-)
+// If standalone server exists, delegate execution to it to avoid Wasm memory overhead
+// and Next.js standalone warning ("next start does not work with output: standalone")
+const standaloneServerPath = path.join(__dirname, '.next', 'standalone', 'server.js')
+if (fs.existsSync(standaloneServerPath) && require.main === module) {
+  process.env.PORT = String(port)
+  process.env.HOSTNAME = hostname
+  require(standaloneServerPath)
+} else {
+  const { createServer } = require('http')
+  const { parse } = require('url')
+  const next = require('next')
 
-app.prepare().then(() => {
-  createServer(async (req, res) => {
-    try {
-      // Be sure to pass true as the second argument to url.parse.
-      // This tells it to parse the query portion of the URL.
-      const parsedUrl = parse(req.url, true)
-      const { pathname, query } = parsedUrl
+  const dev = process.env.NODE_ENV !== 'production'
+  const app = next({ dev, hostname, port })
+  const handle = app.getRequestHandler()
 
-      if (pathname === '/a') {
-        await app.render(req, res, '/a', query)
-      } else if (pathname === '/b') {
-        await app.render(req, res, '/b', query)
-      } else {
-        await handle(req, res, parsedUrl)
-      }
-    } catch (err) {
-      console.error('Error occurred handling', req.url, err)
-      res.statusCode = 500
-      res.end('internal server error')
-    }
-  })
-    .once('error', (err) => {
-      console.error(err)
+  console.log(
+    `> next@${require('next/package.json').version} | node ${process.version} | cwd ${process.cwd()} | port ${port}`
+  )
+
+  app
+    .prepare()
+    .then(() => {
+      createServer(async (req, res) => {
+        try {
+          const parsedUrl = parse(req.url, true)
+          await handle(req, res, parsedUrl)
+        } catch (err) {
+          console.error('Error occurred handling', req.url, err)
+          res.statusCode = 500
+          res.end('internal server error')
+        }
+      })
+        .once('error', (err) => {
+          console.error(err)
+          process.exit(1)
+        })
+        .listen(port, () => {
+          console.log(`> Ready on http://${hostname}:${port}`)
+        })
+    })
+    .catch((err) => {
+      console.error('NEXT ERROR:', err)
       process.exit(1)
     })
-    .listen(port, () => {
-      console.log(`> Ready on http://${hostname}:${port}`)
-    })
-}).catch((err) => {
-  console.error('NEXT ERROR:', err)
-  process.exit(1)
-})
+}
+
