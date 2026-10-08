@@ -11,6 +11,10 @@ const port = process.env.PORT || 3000
 const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
 
+console.log(
+  `> next@${require('next/package.json').version} | node ${process.version} | cwd ${process.cwd()} | port ${port}`
+)
+
 app.prepare().then(() => {
   createServer(async (req, res) => {
     try {
@@ -39,4 +43,7 @@ app.prepare().then(() => {
     .listen(port, () => {
       console.log(`> Ready on http://${hostname}:${port}`)
     })
+}).catch((err) => {
+  console.error('NEXT ERROR:', err)
+  process.exit(1)
 })

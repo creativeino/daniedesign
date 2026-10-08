@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   images: {
     // Host ka glibc purana hai (GLIBC_2.29 missing), sharp/SWC native
     // binaries fail hote hain, isliye optimization band rakhi hai.
