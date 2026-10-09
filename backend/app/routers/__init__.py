@@ -11,6 +11,7 @@ from app.routers.team import router as team_router
 from app.routers.gallery import router as gallery_router
 from app.routers.stats import router as stats_router
 from app.routers.contact import router as contact_router
+from app.routers.cloudinary import router as cloudinary_router
 
 __all__ = [
     "auth_router",
@@ -25,4 +26,5 @@ __all__ = [
     "gallery_router",
     "stats_router",
     "contact_router",
+    "cloudinary_router",
 ]

@@ -703,7 +703,7 @@ export type UploadedMediaItem = {
  * server — the file bytes go straight to Cloudinary, so Vercel's ~4.5MB
  * function request-body limit never applies (videos included).
  */
-const CLOUDINARY_SIGN_ROUTE = "/api/cloudinary/sign";
+const CLOUDINARY_SIGN_ROUTE = `${API_BASE_URL}/cloudinary/sign`;
 
 // Cloudinary Free plan hard caps (image 10MB / video 100MB) — fail fast
 // client-side with a clear message instead of a rejected upload.
@@ -840,7 +840,7 @@ export type MediaFileItem = {
  * @returns The library files; throws when the listing fails.
  */
 export async function listMedia(): Promise<MediaFileItem[]> {
-  const res = await fetch("/api/cloudinary/media", {
+  const res = await fetch(`${API_BASE_URL}/cloudinary/media`, {
     headers: { Authorization: `Bearer ${getAdminToken()}` },
     cache: "no-store",
   });

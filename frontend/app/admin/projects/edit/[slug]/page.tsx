@@ -1,15 +1,27 @@
 // Edit-project screen — server component that resolves the [slug] route
 // param, fetches the existing project, and hands it to ProjectForm in edit mode.
-import { getProjectBySlug } from "@/lib/api";
+import { getProjectBySlug, getProjects } from "@/lib/api";
 import ProjectForm from "@/components/admin/ProjectForm";
 import { notFound } from "next/navigation";
 
-// Admin pages require a live server (API calls) — skip static pre-rendering.
-export const dynamic = "force-dynamic";
+import { projects } from "@/data/projects";
 
-// Required by output: "export" — return empty array since admin is server-only.
-export function generateStaticParams() {
-  return [];
+// Required by output: "export" — provide static params so Next can pre-render pages.
+export async function generateStaticParams() {
+  try {
+    const apiProjects = await getProjects();
+    const slugs = new Set<string>();
+    apiProjects.forEach((p: { slug?: string }) => {
+      if (p.slug) slugs.add(p.slug);
+    });
+    projects.forEach((p) => {
+      if (p.slug) slugs.add(p.slug);
+    });
+    const list = Array.from(slugs);
+    return (list.length > 0 ? list : ["preview"]).map((slug) => ({ slug }));
+  } catch {
+    return projects.map((p) => ({ slug: p.slug }));
+  }
 }
 
 type Props = {

@@ -1,15 +1,27 @@
 // Edit-article screen — server component that resolves the [slug] route
 // param, fetches the existing post, and hands it to BlogForm in edit mode.
-import { getBlogPostBySlug } from "@/lib/api";
+import { getBlogPostBySlug, getBlogPosts } from "@/lib/api";
 import BlogForm from "@/components/admin/BlogForm";
 import { notFound } from "next/navigation";
 
-// Admin pages require a live server (API calls) — skip static pre-rendering.
-export const dynamic = "force-dynamic";
+import { blogPosts } from "@/data/blog";
 
-// Required by output: "export" — return empty array since admin is server-only.
-export function generateStaticParams() {
-  return [];
+// Required by output: "export" — provide static params so Next can pre-render pages.
+export async function generateStaticParams() {
+  try {
+    const apiPosts = await getBlogPosts();
+    const slugs = new Set<string>();
+    apiPosts.forEach((p: { slug?: string }) => {
+      if (p.slug) slugs.add(p.slug);
+    });
+    blogPosts.forEach((p) => {
+      if (p.slug) slugs.add(p.slug);
+    });
+    const list = Array.from(slugs);
+    return (list.length > 0 ? list : ["preview"]).map((slug) => ({ slug }));
+  } catch {
+    return blogPosts.map((p) => ({ slug: p.slug }));
+  }
 }
 
 type Props = {

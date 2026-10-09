@@ -23,6 +23,7 @@ from app.routers import (
     gallery_router,
     stats_router,
     contact_router,
+    cloudinary_router,
 )
 
 logging.basicConfig(
@@ -103,6 +104,7 @@ app.include_router(team_router, prefix="/api")
 app.include_router(gallery_router, prefix="/api")
 app.include_router(stats_router, prefix="/api")
 app.include_router(contact_router, prefix="/api")
+app.include_router(cloudinary_router, prefix="/api")
 
 @app.get("/", tags=["Health"])
 def health_check():

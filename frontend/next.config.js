@@ -27,12 +27,10 @@ const nextConfig = {
       },
     ],
   },
-  async redirects() {
-    return [
-      { source: "/solutions", destination: "/services", permanent: true },
-      { source: "/solutions/:slug", destination: "/services/:slug", permanent: true },
-    ];
-  },
+  // NOTE: redirects() is NOT supported with output: "export".
+  // To redirect /solutions → /services on Namecheap, add these lines to .htaccess:
+  //   Redirect 301 /solutions  /services
+  //   Redirect 301 /solutions/ /services/
 };
 
 module.exports = nextConfig;
