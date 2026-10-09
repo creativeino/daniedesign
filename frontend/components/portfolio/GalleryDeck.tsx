@@ -182,12 +182,13 @@ export default function GalleryDeck({ images, title }: GalleryDeckProps) {
                 {isVideoUrl(image) ? (
                   <MediaVideo
                     src={image}
+                    fill
                     autoPlay
                     muted
                     loop
                     playsInline
                     preload="metadata"
-                    buttonClassName="right-3 top-3"
+                    buttonClassName="top-3 right-3"
                     className="object-cover grayscale contrast-[1.15] brightness-[0.8] transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.05] group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100"
                   />
                 ) : (

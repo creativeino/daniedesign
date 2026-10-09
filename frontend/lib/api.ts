@@ -39,12 +39,25 @@ async function fetchWithFallback<T>(url: string, fallbackData: T): Promise<T> {
   }
 }
 
+import { resolveMediaUrl } from "@/lib/utils";
+
 // Normalize backend snake_case to frontend camelCase for BlogPost
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeBlogPost(raw: any): BlogPost {
   return {
     ...raw,
+    image: resolveMediaUrl(raw.image),
     readTime: raw.readTime ?? raw.read_time ?? "4 min read",
+  };
+}
+
+// Normalize project URLs (resolving legacy blob URLs to Cloudinary)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalizeProject(raw: any): Project {
+  return {
+    ...raw,
+    image: resolveMediaUrl(raw.image),
+    gallery: Array.isArray(raw.gallery) ? raw.gallery.map(resolveMediaUrl) : [],
   };
 }
 
@@ -167,10 +180,11 @@ export async function getProjects(params?: {
   if (params?.search) query.set("search", params.search);
 
   const qs = query.toString() ? `?${query.toString()}` : "";
-  return fetchWithFallback<Project[]>(
+  const list = await fetchWithFallback<Project[]>(
     `${API_BASE_URL}/projects${qs}`,
     fallbackProjects
   );
+  return list.map(normalizeProject);
 }
 
 /**
@@ -183,10 +197,12 @@ export async function getProjectBySlug(slug: string): Promise<Project | undefine
   try {
     const res = await fetch(`${API_BASE_URL}/projects/${slug}`, { cache: "no-store" });
     if (res.ok) {
-      return (await res.json()) as Project;
+      const data = await res.json();
+      return normalizeProject(data);
     }
   } catch {}
-  return fallbackProjects.find((p) => p.slug === slug);
+  const fallback = fallbackProjects.find((p) => p.slug === slug);
+  return fallback ? normalizeProject(fallback) : undefined;
 }
 
 /**

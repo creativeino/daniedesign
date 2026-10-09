@@ -4,6 +4,14 @@ import { getBlogPostBySlug } from "@/lib/api";
 import BlogForm from "@/components/admin/BlogForm";
 import { notFound } from "next/navigation";
 
+// Admin pages require a live server (API calls) — skip static pre-rendering.
+export const dynamic = "force-dynamic";
+
+// Required by output: "export" — return empty array since admin is server-only.
+export function generateStaticParams() {
+  return [];
+}
+
 type Props = {
   params: Promise<{ slug: string }>;
 };

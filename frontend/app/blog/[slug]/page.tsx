@@ -9,17 +9,31 @@ import { ArrowLeft, ArrowUpRight, Clock, CheckCircle2 } from "lucide-react";
 import { blogPosts, getPost } from "@/data/blog";
 import Button from "@/components/shared/Button";
 
+import { getBlogPosts, getBlogPostBySlug } from "@/lib/api";
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return blogPosts.map((post) => ({ slug: post.slug }));
+export async function generateStaticParams() {
+  try {
+    const apiPosts = await getBlogPosts();
+    const slugs = new Set<string>();
+    apiPosts.forEach((p) => {
+      if (p.slug) slugs.add(p.slug);
+    });
+    blogPosts.forEach((p) => {
+      if (p.slug) slugs.add(p.slug);
+    });
+    return Array.from(slugs).map((slug) => ({ slug }));
+  } catch {
+    return blogPosts.map((post) => ({ slug: post.slug }));
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = (await getBlogPostBySlug(slug)) ?? getPost(slug);
   if (!post) return { title: "Article Not Found" };
 
   const title = `${post.title} — Danie Design Insights`;
@@ -57,7 +71,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPostPage({ params }: Props) {
   // params is a Promise in this Next version — await it before reading the slug.
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = (await getBlogPostBySlug(slug)) ?? getPost(slug);
   // Unknown slug: render the app-level 404 (app/not-found.tsx).
   if (!post) notFound();
 

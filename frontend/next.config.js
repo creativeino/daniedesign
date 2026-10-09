@@ -1,9 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  // "export" = generates static HTML/CSS/JS — required for Namecheap shared hosting
+  output: "export",
+  trailingSlash: true, // ensures links work correctly on shared hosting
   images: {
-    // Host ka glibc purana hai (GLIBC_2.29 missing), sharp/SWC native
-    // binaries fail hote hain, isliye optimization band rakhi hai.
+    // Image optimization disabled — shared hosting has outdated glibc
+    // (GLIBC_2.29 missing), so sharp/SWC native binaries fail.
     unoptimized: true,
     remotePatterns: [
       {

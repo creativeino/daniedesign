@@ -15,9 +15,11 @@ type ProjectCardProps = {
 };
 
 export default function ProjectCard({ project, className, imgSizes }: ProjectCardProps) {
-  // A gallery video doubles as the animated card cover; the cover image stays
-  // as the poster so nothing is lost while the video loads.
-  const coverVideo = project.gallery?.find((url) => isVideoUrl(url));
+  // If cover image itself is a video, or any gallery item is a video,
+  // play it as the animated card cover.
+  const coverVideo = isVideoUrl(project.image)
+    ? project.image
+    : project.gallery?.find((url) => isVideoUrl(url));
 
   return (
     <TiltCard

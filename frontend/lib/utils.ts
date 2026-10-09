@@ -24,6 +24,43 @@ export function cn(...inputs: ClassValue[]) {
  */
 const VIDEO_EXTENSIONS = [".mp4", ".webm", ".mov"];
 
+const BLOB_TO_CLOUDINARY_MAPPING: Record<string, string> = {
+  "Media Library ‹ Danie Design — WordPress-eoFhMcofu0Hy3W1IBAQWASaGaUFpJW.mp4":
+    "https://res.cloudinary.com/diajvaro/video/upload/v1791370360/daniedesign/migrated/ygd4kdsqurl1gdosysrk.mp4",
+  "Media Library ‹ Danie Design — WordPress_2-caeNuDJ4afXBRvRrTwqBUSTIsuUN43.mp4":
+    "https://res.cloudinary.com/diajvaro/video/upload/v1791370379/daniedesign/migrated/ttas8ljrcrua01gcmev3.mp4",
+  "Media Library ‹ Danie Design — WordPress_3-GX9zVZiHTksVrN322BdvaOQSGBtv0J.mp4":
+    "https://res.cloudinary.com/diajvaro/video/upload/v1791370673/daniedesign/migrated/k7bpifchtoav6giy7s3e.mp4",
+  "Media Library ‹ Danie Design — WordPress_4-P8agwLJsrKwEQCoZEypdBgrEKq04zN.mp4":
+    "https://res.cloudinary.com/diajvaro/video/upload/v1791370691/daniedesign/migrated/ysn98kczlok2tk8hw7nu.mp4",
+  "Media Library ‹ Danie Design — WordPress_5-6p635rxDqwNia0DdSYAYUJfl2oi20E.mp4":
+    "https://res.cloudinary.com/diajvaro/video/upload/v1791370727/daniedesign/migrated/ayhhtjuynvzzhgiuojil.mp4",
+  "Media Library ‹ Danie Design — WordPress_6-6pu8cSA8t1MjEItnWErob8sm0L1wSI.mp4":
+    "https://res.cloudinary.com/diajvaro/video/upload/v1791370764/daniedesign/migrated/spvkrao22gpg2awaizot.mp4",
+};
+
+/**
+ * Resolve any legacy or proxy URL to its direct accessible CDN / media URL.
+ * In particular, old Vercel Blob URLs like `/api/blob/file?p=...` are redirected
+ * to their actual uploaded Cloudinary video URLs.
+ */
+export function resolveMediaUrl(url: string): string {
+  if (!url) return url;
+
+  if (url.includes("/api/blob/file")) {
+    const cut = url.search(/[?#]/);
+    if (cut !== -1) {
+      const params = new URLSearchParams(url.slice(cut + 1));
+      const p = params.get("p") || "";
+      const decoded = decodeURIComponent(p);
+      if (BLOB_TO_CLOUDINARY_MAPPING[p]) return BLOB_TO_CLOUDINARY_MAPPING[p];
+      if (BLOB_TO_CLOUDINARY_MAPPING[decoded]) return BLOB_TO_CLOUDINARY_MAPPING[decoded];
+    }
+  }
+
+  return url;
+}
+
 /**
  * Resolve the stored media name behind a URL.
  *
@@ -50,7 +87,14 @@ function mediaName(url: string): string {
  */
 export function isVideoUrl(url: string): boolean {
   if (!url) return false;
-  const name = mediaName(url).toLowerCase();
+  const resolved = resolveMediaUrl(url);
+
+  // Cloudinary video delivery URLs contain /video/upload/ or /video/ in their pathname
+  if (resolved.includes("res.cloudinary.com") && resolved.includes("/video/")) {
+    return true;
+  }
+
+  const name = mediaName(resolved).toLowerCase();
   return VIDEO_EXTENSIONS.some((ext) => name.endsWith(ext));
 }
 

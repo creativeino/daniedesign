@@ -21,8 +21,20 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return projects.map((project) => ({ slug: project.slug }));
+export async function generateStaticParams() {
+  try {
+    const apiProjects = await getProjects();
+    const slugs = new Set<string>();
+    apiProjects.forEach((p) => {
+      if (p.slug) slugs.add(p.slug);
+    });
+    projects.forEach((p) => {
+      if (p.slug) slugs.add(p.slug);
+    });
+    return Array.from(slugs).map((slug) => ({ slug }));
+  } catch {
+    return projects.map((project) => ({ slug: project.slug }));
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -114,9 +126,11 @@ export default async function ProjectPage({ params }: Props) {
   const stats = outcome ? extractStats(outcome) : [];
   const chapters = steps.map((s) => ({ key: s.key, label: s.label }));
 
-  // Gallery video doubles as the project's animated cover (hero + plate);
-  // the cover image stays as its poster.
-  const coverVideo = project.gallery?.find((url) => isVideoUrl(url));
+  // If cover image itself is a video, or any gallery item is a video,
+  // use it as the animated hero cover.
+  const coverVideo = isVideoUrl(project.image)
+    ? project.image
+    : project.gallery?.find((url) => isVideoUrl(url));
 
   return (
     <main>

@@ -2,6 +2,9 @@ import type { MetadataRoute } from "next";
 import { projects } from "@/data/projects";
 import { blogPosts } from "@/data/blog";
 
+// Required for Next.js static export (output: "export")
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://daniedesign.com";
   const now = new Date();

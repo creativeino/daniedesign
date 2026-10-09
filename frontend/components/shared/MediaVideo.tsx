@@ -1,38 +1,31 @@
-// Video player with a play/pause toggle overlaid on the video.
-//
-// Drop-in replacement for a bare <video>: same sizing/className behaviour as
-// MediaImage, plus a floating button so galleries, admin previews and the
-// media library can start/stop playback without native controls.
+// Video component with reliable autoplay using IntersectionObserver.
+// Plays automatically when the video enters the viewport (muted + playsInline).
+// Shows a play/pause button overlay for manual control.
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
 
+import { resolveMediaUrl } from "@/lib/utils";
+
 type Props = {
-  /** Media URL (backend upload or Blob-proxied). */
   src: string;
-  /** Cover image shown until playback starts (falls back when video is loading). */
   poster?: string;
-  /** Classes applied to the <video> element (object-fit, filters…). */
   className?: string;
-  /** Position the wrapper absolutely inside a relative parent (matches MediaImage). */
   fill?: boolean;
   autoPlay?: boolean;
   loop?: boolean;
   muted?: boolean;
   playsInline?: boolean;
   preload?: "auto" | "metadata" | "none";
-  /** Native scrubber/volume bar (kept for the lightbox). */
   controls?: boolean;
-  /** Render the play/pause overlay button. */
   showButton?: boolean;
-  /** Placement of the button, e.g. "bottom-3 right-3" (default) or "top-3 right-3". */
   buttonClassName?: string;
   onLoadedMetadata?: (e: React.SyntheticEvent<HTMLVideoElement>) => void;
 };
 
 export default function MediaVideo({
-  src,
+  src: rawSrc,
   poster,
   className = "",
   fill = false,
@@ -46,31 +39,57 @@ export default function MediaVideo({
   buttonClassName = "bottom-3 right-3",
   onLoadedMetadata,
 }: Props) {
+  const src = resolveMediaUrl(rawSrc);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
 
+  // IntersectionObserver + immediate attempt — play when visible, pause when off-screen.
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !autoPlay) return;
 
-    if (autoPlay) {
-      video.muted = true;
-      video.defaultMuted = true;
-      video.playsInline = true;
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise
+    // Force required attributes on the DOM element directly (crucial for browser autoplay policies)
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+
+    const playSafe = () => {
+      const promise = video.play();
+      if (promise !== undefined) {
+        promise
           .then(() => setPlaying(true))
           .catch(() => {
-            // Autoplay blocked or waiting for user interaction
+            // Autoplay was blocked or element not yet ready; will try again on intersection
             setPlaying(false);
           });
       }
+    };
+
+    // If already in view on mount, play immediately
+    const rect = video.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      playSafe();
     }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            playSafe();
+          } else {
+            video.pause();
+            setPlaying(false);
+          }
+        });
+      },
+      { threshold: 0.1 } // start playing as soon as 10% is visible
+    );
+
+    observer.observe(video);
+    return () => observer.disconnect();
   }, [src, autoPlay]);
 
   const toggle = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // Keep the click from bubbling into gallery/lightbox/Link navigation.
     e.preventDefault();
     e.stopPropagation();
     const video = videoRef.current;
@@ -87,8 +106,8 @@ export default function MediaVideo({
         poster={poster}
         autoPlay={autoPlay}
         loop={loop}
-        muted={muted ?? autoPlay}
-        playsInline={playsInline}
+        muted={muted ?? autoPlay}   // muted must be true for autoplay to work
+        playsInline={playsInline}   // required on iOS Safari
         preload={preload}
         controls={controls}
         onLoadedMetadata={onLoadedMetadata}
