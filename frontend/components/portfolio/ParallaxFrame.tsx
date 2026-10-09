@@ -104,6 +104,7 @@ export default function ParallaxFrame({ src, video, alt, caption, aspect = "16/7
                     src={video}
                     poster={src}
                     fill
+                    autoPlay
                     muted
                     loop
                     preload="metadata"

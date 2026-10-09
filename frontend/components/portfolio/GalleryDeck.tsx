@@ -182,6 +182,7 @@ export default function GalleryDeck({ images, title }: GalleryDeckProps) {
                 {isVideoUrl(image) ? (
                   <MediaVideo
                     src={image}
+                    autoPlay
                     muted
                     loop
                     playsInline

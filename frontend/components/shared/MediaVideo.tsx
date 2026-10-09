@@ -5,7 +5,7 @@
 // media library can start/stop playback without native controls.
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
 
 type Props = {
@@ -49,6 +49,26 @@ export default function MediaVideo({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (autoPlay) {
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setPlaying(true))
+          .catch(() => {
+            // Autoplay blocked or waiting for user interaction
+            setPlaying(false);
+          });
+      }
+    }
+  }, [src, autoPlay]);
+
   const toggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     // Keep the click from bubbling into gallery/lightbox/Link navigation.
     e.preventDefault();
@@ -67,7 +87,7 @@ export default function MediaVideo({
         poster={poster}
         autoPlay={autoPlay}
         loop={loop}
-        muted={muted}
+        muted={muted ?? autoPlay}
         playsInline={playsInline}
         preload={preload}
         controls={controls}
