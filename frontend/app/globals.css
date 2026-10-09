@@ -189,6 +189,7 @@ body {
     transparent 100%
   );
   animation: aurora-spin 9s linear infinite;
+  will-change: transform;
   pointer-events: none;
 }
 

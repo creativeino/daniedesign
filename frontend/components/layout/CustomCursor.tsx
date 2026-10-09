@@ -86,18 +86,29 @@ export default function CustomCursor() {
     let visible = false;
     let stretchS = 1;
     const state = { baseScale: 1 };
+    let snapRect: DOMRect | null = null;
 
-    const tick = () => {
-      // magnetic follow target: blend cursor with hovered element center
-      let fx = px;
-      let fy = py;
+    const updateSnapRect = () => {
       if (snapEl && snapEl.isConnected && mode !== "default") {
         const r = snapEl.getBoundingClientRect();
         if (r.width > 0 && r.height > 0 && r.width < 360 && r.height < 360) {
-          const pull = mode === "badge" ? 0.7 : 0.5;
-          fx = px + (r.left + r.width / 2 - px) * pull;
-          fy = py + (r.top + r.height / 2 - py) * pull;
+          snapRect = r;
+          return;
         }
+      }
+      snapRect = null;
+    };
+
+    const tick = () => {
+      if (!visible) return;
+
+      // magnetic follow target: blend cursor with hovered element center
+      let fx = px;
+      let fy = py;
+      if (snapRect) {
+        const pull = mode === "badge" ? 0.7 : 0.5;
+        fx = px + (snapRect.left + snapRect.width / 2 - px) * pull;
+        fy = py + (snapRect.top + snapRect.height / 2 - py) * pull;
       }
 
       dx += (px - dx) * 0.55;
@@ -227,6 +238,7 @@ export default function CustomCursor() {
           gsap.to(orbit, { opacity: 1, scale: 1.6, duration: 0.35, ease: "power3.out" });
           gsap.to(charEls, { color: "#0e0e0e", duration: 0.25 });
           gsap.to(spin, { timeScale: 3, duration: 0.4 });
+          updateSnapRect();
           if (!wasBadge && textEl) {
             gsap.fromTo(
               textEl,
@@ -237,6 +249,7 @@ export default function CustomCursor() {
         } else {
           mode = "interactive";
           snapEl = target;
+          updateSnapRect();
           setLabel(null);
 
           gsap.to(ring, {
@@ -262,6 +275,7 @@ export default function CustomCursor() {
       } else {
         mode = "default";
         snapEl = null;
+        snapRect = null;
         setLabel(null);
 
         gsap.to(ring, {

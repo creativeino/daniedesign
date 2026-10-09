@@ -294,21 +294,19 @@ function SignalSvg({ left, right }: { left: number; right: number }) {
       aria-hidden="true"
     >
       <defs>
-        <filter id="dotGlow" x="-120%" y="-120%" width="340%" height="340%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+        <filter id="dotGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
 
-        <filter id="cometGlow" x="-150%" y="-150%" width="400%" height="400%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="sharp" />
-          <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="mid" />
-          <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="ambient" />
+        <filter id="cometGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="sharp" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="ambient" />
           <feMerge>
             <feMergeNode in="ambient" />
-            <feMergeNode in="mid" />
             <feMergeNode in="sharp" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
@@ -448,21 +446,19 @@ function CircularSvg({ count, radius }: { count: number; radius: number }) {
       aria-hidden="true"
     >
       <defs>
-        <filter id="circDotGlow" x="-120%" y="-120%" width="340%" height="340%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+        <filter id="circDotGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
 
-        <filter id="circCometGlow" x="-150%" y="-150%" width="400%" height="400%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="sharp" />
-          <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="mid" />
-          <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="ambient" />
+        <filter id="circCometGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="sharp" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="ambient" />
           <feMerge>
             <feMergeNode in="ambient" />
-            <feMergeNode in="mid" />
             <feMergeNode in="sharp" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>

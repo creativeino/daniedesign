@@ -16,7 +16,12 @@ export default function SmoothScroll() {
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const lenis = new Lenis({ duration: 1.15, smoothWheel: true });
+    const lenis = new Lenis({
+      duration: 0.9,
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.5,
+    });
 
     lenis.on("scroll", ScrollTrigger.update);
 
@@ -24,7 +29,8 @@ export default function SmoothScroll() {
       lenis.raf(time * 1000);
     };
     gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
+    // Use standard lag smoothing so long frames recover smoothly instead of jumping
+    gsap.ticker.lagSmoothing(500, 33);
 
     return () => {
       gsap.ticker.remove(raf);

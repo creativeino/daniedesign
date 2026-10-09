@@ -180,7 +180,7 @@ export default function Hero() {
           muted
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
           onLoadedMetadata={(e) => {
             e.currentTarget.playbackRate = 0.72;
           }}

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useRef, useEffect, type ReactNode } from "react";
 import { gsap, prefersReducedMotion, isCoarsePointer } from "@/lib/gsap";
@@ -83,10 +83,14 @@ export default function TiltCard({
       if (glareEl) glareEl.style.opacity = "1";
     };
 
-    const onMove = (e: MouseEvent) => {
+    let rafId: number | null = null;
+    let pendingEvent: MouseEvent | null = null;
+
+    const updateTilt = () => {
+      if (!pendingEvent) return;
       const rect = root.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width - 0.5;
-      const py = (e.clientY - rect.top) / rect.height - 0.5;
+      const px = (pendingEvent.clientX - rect.left) / rect.width - 0.5;
+      const py = (pendingEvent.clientY - rect.top) / rect.height - 0.5;
 
       rotY(px * maxTilt);
       rotX(-py * maxTilt);
@@ -100,9 +104,22 @@ export default function TiltCard({
       if (glareEl) {
         glareEl.style.background = `radial-gradient(420px circle at ${gx}% ${gy}%, rgba(255, 255, 255, 0.2), transparent 45%)`;
       }
+      rafId = null;
+    };
+
+    const onMove = (e: MouseEvent) => {
+      pendingEvent = e;
+      if (!rafId) {
+        rafId = requestAnimationFrame(updateTilt);
+      }
     };
 
     const onLeave = () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      pendingEvent = null;
       rotX(0);
       rotY(0);
       rotZ(0);
@@ -123,6 +140,7 @@ export default function TiltCard({
     root.addEventListener("mousemove", onMove);
     root.addEventListener("mouseleave", onLeave);
     return () => {
+      if (rafId) cancelAnimationFrame(rafId);
       root.removeEventListener("mouseenter", onEnter);
       root.removeEventListener("mousemove", onMove);
       root.removeEventListener("mouseleave", onLeave);

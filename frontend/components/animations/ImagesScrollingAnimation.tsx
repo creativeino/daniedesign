@@ -49,7 +49,6 @@ const StickyCard_001 = ({
   const rotateX = useTransform(depth, [0, 1], [0, -7]);
   const y = useTransform(depth, [0, 1], [0, -26]);
   const tint = useTransform(depth, [0, 1], [0, 0.5]);
-  const blur = useTransform(depth, [0, 1], ["0px", "3px"]);
 
   // Gentle in-card parallax on the photo for extra life.
   const imgY = useTransform(depth, [0, 1], ["0%", "-4%"]);
@@ -78,7 +77,6 @@ const StickyCard_001 = ({
             scale,
             rotateX,
             y,
-            filter: blur,
             top: `calc(-4vh + ${i * 15 + 220}px)`,
             transformStyle: "preserve-3d",
           }}
