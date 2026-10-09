@@ -29,7 +29,37 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const project = (await getProjectBySlug(slug)) ?? getProject(slug);
   if (!project) return { title: "Project Not Found" };
-  return { title: project.title, description: project.description };
+
+  const title = `${project.title} — ${project.category} Case Study`;
+  const description = project.description;
+  const image = project.image;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `/work/${project.slug}`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: project.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
+  };
 }
 
 /** Narrative steps; "outcome" is promoted to its own ImpactBand section. */

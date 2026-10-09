@@ -17,16 +17,38 @@ export function generateStaticParams() {
   return blogPosts.map((post) => ({ slug: post.slug }));
 }
 
-// Per-article SEO metadata with the post image as OpenGraph preview; unknown
-// slugs get a fallback title (the page itself then triggers notFound()).
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) return { title: "Article Not Found" };
+
+  const title = `${post.title} — Danie Design Insights`;
+  const description = post.excerpt;
+
   return {
-    title: `${post.title} — Danie Design Insights`,
-    description: post.excerpt,
+    title,
+    description,
+    alternates: {
+      canonical: `/blog/${post.slug}`,
+    },
     openGraph: {
+      type: "article",
+      title,
+      description,
+      publishedTime: post.date,
+      images: [
+        {
+          url: post.image,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
       images: [post.image],
     },
   };

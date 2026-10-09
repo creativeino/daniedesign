@@ -32,19 +32,113 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://daniedesign.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "Danie Design — Creative, Design & Digital Marketing for Growing Brands",
+    default: "Danie Design — Creative, Design & Web Development Studio",
     template: "%s — Danie Design",
   },
   description:
-    "Danie Design is a full-service creative digital agency. We build recognizable brands, strong websites and digital experiences designed to turn attention into meaningful action.",
+    "Danie Design is a full-service creative digital agency. We build recognizable brands, high-performance websites, and digital experiences that scale businesses worldwide.",
+  applicationName: "Danie Design",
+  authors: [{ name: "Danie Design", url: siteUrl }],
+  creator: "Danie Design",
+  publisher: "Danie Design",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   keywords: [
-    "branding",
+    "branding agency",
     "UI/UX design",
-    "web development",
-    "digital marketing",
-    "creative agency",
+    "web development studio",
+    "digital marketing agency",
+    "creative studio",
+    "Next.js web development",
+    "full-stack design agency",
+    "brand identity",
+    "custom software development",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName: "Danie Design",
+    title: "Danie Design — Creative, Design & Web Development Studio",
+    description:
+      "Full-service creative digital agency. We build recognizable brands, high-performance websites, and digital experiences that scale businesses worldwide.",
+    images: [
+      {
+        url: "/images/hero.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Danie Design — Creative Studio",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Danie Design — Creative, Design & Web Development Studio",
+    description:
+      "Full-service creative digital agency. We craft enduring brand identities and modern high-speed web platforms.",
+    images: ["/images/hero.jpg"],
+    creator: "@daniedesign",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: "Danie Design",
+      url: siteUrl,
+      logo: `${siteUrl}/images/Logo-01.svg`,
+      sameAs: [
+        "https://twitter.com/daniedesign",
+        "https://www.linkedin.com/company/daniedesign",
+        "https://instagram.com/daniedesign",
+      ],
+      description:
+        "Full-service creative digital agency specializing in branding, UI/UX, web development, and digital marketing.",
+      foundingDate: "2015",
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "customer service",
+        availableLanguage: ["English"],
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: "Danie Design",
+      publisher: {
+        "@id": `${siteUrl}/#organization`,
+      },
+    },
   ],
 };
 
@@ -55,6 +149,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       data-scroll-behavior="smooth"
       className={`${sora.variable} ${roboto.variable} ${plexMono.variable}`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-screen antialiased" suppressHydrationWarning>
         <SiteShell>{children}</SiteShell>
         {/* Google Analytics (gtag.js) — loaded after hydration, production only,
