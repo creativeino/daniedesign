@@ -355,7 +355,7 @@ export default function Hero() {
 
         <div
           data-hero-stats
-          className="mt-16 grid max-w-3xl grid-cols-3 divide-x divide-ink/15 border-t border-ink/15 pt-8"
+          className="mt-16 grid max-w-2xl grid-cols-2 divide-x divide-ink/15 border-t border-ink/15 pt-8"
         >
           {heroStats.map((stat) => (
             <div key={stat.label} className="px-6 first:pl-0 last:pr-0">

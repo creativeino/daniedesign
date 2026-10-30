@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   title: "FAQ",
   description:
     "Answers about our services, process, pricing and how we work with clients worldwide.",
+  alternates: {
+    canonical: "/faq",
+  },
 };
 
 const faqCategories = ["General", "Services", "Process", "Working Together"];
@@ -23,7 +26,7 @@ const faqItems: FaqItem[] = [
     category: "General",
     question: "Who is Danie Design?",
     answer:
-      "We're a full-service creative digital agency, active since 2015. We handle branding, UI/UX design, website development and digital marketing under one roof. So far we've worked with 900+ clients worldwide and shipped 1,000+ projects across 24 countries.",
+      "We're a full-service creative digital agency, active since 2015. We handle branding, UI/UX design, website development and digital marketing under one roof. So far we've shipped 160+ projects across 24 countries with a 98% client satisfaction rate.",
   },
   {
     category: "General",

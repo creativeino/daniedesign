@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: "Creative",
   description:
     "Logo design, brand design, packaging, UI/UX, web design, motion graphics — the full creative toolbox of Danie Design.",
+  alternates: {
+    canonical: "/creative",
+  },
 };
 
 export default function CreativePage() {

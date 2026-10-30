@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   title: "Contact",
   description:
     "Tell us about your business, your project and your goals.",
+  alternates: {
+    canonical: "/contact",
+  },
 };
 
 export default function ContactPage() {

@@ -328,7 +328,13 @@ export default async function ProjectPage({ params }: Props) {
       )}
 
       {/* ── Gallery ─────────────────────────────────────────────────────── */}
-      {project.gallery.length > 0 && <GalleryDeck images={project.gallery} title={project.title} />}
+      {project.gallery.length > 0 && (
+        <GalleryDeck
+          images={project.gallery}
+          title={project.title}
+          category={project.category}
+        />
+      )}
 
       {/* ── Prev / Next ─────────────────────────────────────────────────── */}
       <section className="border-t border-ink/10 py-16 md:py-24">

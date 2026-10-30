@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
     "How Danie Design collects, uses and protects your personal information — what we gather, why, and your rights.",
+  alternates: {
+    canonical: "/privacy-policy",
+  },
 };
 
 type PolicySection = {

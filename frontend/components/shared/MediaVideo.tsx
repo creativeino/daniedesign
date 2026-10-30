@@ -5,6 +5,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
+import MediaImage from "@/components/shared/MediaImage";
 
 import { resolveMediaUrl } from "@/lib/utils";
 
@@ -42,6 +43,12 @@ export default function MediaVideo({
   const src = resolveMediaUrl(rawSrc);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  // Reset error when src changes
+  useEffect(() => {
+    setHasError(false);
+  }, [src]);
 
   // IntersectionObserver + immediate attempt — play when visible, pause when off-screen.
   useEffect(() => {
@@ -98,6 +105,20 @@ export default function MediaVideo({
     else video.pause();
   };
 
+  if (hasError && poster) {
+    return (
+      <div className={fill ? "absolute inset-0" : "relative h-full w-full"}>
+        <MediaImage
+          src={poster}
+          alt=""
+          fill={fill}
+          className={`h-full w-full ${className}`.trim()}
+          sizes="(min-width: 1024px) 33vw, 100vw"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={fill ? "absolute inset-0" : "relative h-full w-full"}>
       <video
@@ -111,12 +132,13 @@ export default function MediaVideo({
         preload={preload}
         controls={controls}
         onLoadedMetadata={onLoadedMetadata}
+        onError={() => setHasError(true)}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={() => setPlaying(false)}
         className={`h-full w-full ${className}`.trim()}
       />
-      {showButton && (
+      {showButton && !hasError && (
         <button
           type="button"
           onClick={toggle}

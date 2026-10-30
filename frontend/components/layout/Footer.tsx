@@ -223,12 +223,23 @@ export default function Footer() {
               A full-service creative digital agency focused on design,
               development and marketing — with international client relationships.
             </p>
-            <a
-              href={`mailto:${contact.email}`}
-              className="mt-5 inline-block text-sm font-semibold text-ink underline decoration-accent/50 underline-offset-4 transition-colors hover:text-accent"
-            >
-              {contact.email}
-            </a>
+            <div className="mt-5 flex flex-col gap-2">
+              <a
+                href={`mailto:${contact.email}`}
+                className="text-sm font-semibold text-ink underline decoration-accent/50 underline-offset-4 transition-colors hover:text-accent"
+              >
+                {contact.email}
+              </a>
+              <a
+                href={`tel:${contact.phoneTel}`}
+                className="text-sm font-semibold text-ink underline decoration-accent/50 underline-offset-4 transition-colors hover:text-accent"
+              >
+                {contact.phone}
+              </a>
+              <address className="not-italic mt-1 text-xs leading-relaxed text-muted">
+                {contact.address}
+              </address>
+            </div>
           </div>
 
           <nav aria-label="Footer company links" className="lg:col-span-2">

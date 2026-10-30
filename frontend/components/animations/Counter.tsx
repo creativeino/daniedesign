@@ -31,6 +31,7 @@ export default function Counter({
     }
 
     const counter = { val: 0 };
+    el.textContent = `${counter.val}${suffix}`;
     const ctx = gsap.context(() => {
       gsap.to(counter, {
         val: value,
@@ -52,7 +53,7 @@ export default function Counter({
 
   return (
     <span ref={ref} className={className}>
-      0{suffix}
+      {value}{suffix}
     </span>
   );
 }

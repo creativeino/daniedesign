@@ -11,9 +11,10 @@ import { X, ArrowLeft, ArrowRight, ZoomIn, Play } from "lucide-react";
 type GalleryDeckProps = {
   images: string[];
   title: string;
+  category?: string;
 };
 
-export default function GalleryDeck({ images, title }: GalleryDeckProps) {
+export default function GalleryDeck({ images, title, category }: GalleryDeckProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
@@ -194,7 +195,11 @@ export default function GalleryDeck({ images, title }: GalleryDeckProps) {
                 ) : (
                   <MediaImage
                     src={image}
-                    alt={`${title} — gallery image ${i + 1}`}
+                    alt={
+                      category
+                        ? `${title} — ${category} — image ${i + 1}`
+                        : `${title} — image ${i + 1}`
+                    }
                     fill
                     sizes="(min-width: 1024px) 34vw, 78vw"
                     className="object-cover grayscale contrast-[1.15] brightness-[0.8] transition-[filter,transform] duration-700 ease-out group-hover:scale-[1.05] group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100"
@@ -323,7 +328,11 @@ export default function GalleryDeck({ images, title }: GalleryDeckProps) {
               ) : (
                 <MediaImage
                   src={images[lightboxIndex]}
-                  alt={`${title} — gallery image ${lightboxIndex + 1}`}
+                  alt={
+                    category
+                      ? `${title} — ${category} — image ${lightboxIndex + 1}`
+                      : `${title} — image ${lightboxIndex + 1}`
+                  }
                   fill
                   sizes="92vw"
                   className="object-contain"

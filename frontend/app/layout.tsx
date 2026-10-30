@@ -118,7 +118,8 @@ const jsonLd = {
       logo: `${siteUrl}/images/Logo-01.svg`,
       sameAs: [
         "https://twitter.com/daniedesign",
-        "https://www.linkedin.com/company/daniedesign",
+        "https://www.facebook.com/595929813602598",
+        "https://www.linkedin.com/company/danie-design",
         "https://instagram.com/daniedesign",
       ],
       description:

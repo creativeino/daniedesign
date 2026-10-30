@@ -21,14 +21,14 @@ const impactItems = [
   },
   {
     number: "02",
-    label: "Funding & Growth",
-    value: 200,
-    suffix: "M+",
-    metricLabel: "Funding Raised",
-    title: "Backing milestones like $200M+ in funding.",
+    label: "Global Reach & Projects",
+    value: 160,
+    suffix: "+",
+    metricLabel: "Projects Across 24 Countries",
+    title: "160+ projects delivered across 24 countries.",
     description:
-      "We help companies grow by providing comprehensive design and development solutions, supporting them to achieve milestones like $200M+ in funding.",
-    tag: "$200M+ Raised",
+      "We partner with ambitious startups and global brands to build digital products, brand identities, and high-performance websites worldwide.",
+    tag: "24 Countries",
   },
   {
     number: "03",
@@ -126,7 +126,7 @@ export default function ImpactStats() {
               </h2>
 
               <p className="mt-6 max-w-sm text-sm leading-relaxed text-ink/70 md:text-base">
-                We believe exceptional design and robust engineering should produce measurable business outcomes. A decade in, that means 10+ years of craft, $200M+ in funded growth, 98% client satisfaction, and a 25+ person team building for startups and global brands alike.
+                We believe exceptional design and robust engineering should produce measurable business outcomes. A decade in, that means 10+ years of craft, 160+ successful projects across 24 countries, and 98% client satisfaction building for startups and global brands alike.
               </p>
             </div>
           </div>

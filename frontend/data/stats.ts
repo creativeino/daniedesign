@@ -17,11 +17,11 @@ export type Stat = {
 /** Detailed agency stats rendered as animated counters. */
 export const stats: Stat[] = [
   {
-    value: 1000,
+    value: 160,
     suffix: "+",
     label: "Projects Supported",
     description:
-      "Design and development solutions that helped companies grow — including support for businesses reaching major funding milestones.",
+      "Design and development solutions that helped companies grow into recognizable market brands.",
   },
   {
     value: 10,
@@ -38,18 +38,18 @@ export const stats: Stat[] = [
       "An average satisfaction rate built on quality, communication, transparency and proactive handling of challenges.",
   },
   {
-    value: 500,
-    suffix: "+",
-    label: "Websites & Apps",
+    value: 24,
+    suffix: "",
+    label: "Countries Served",
     description:
-      "Responsive, user-focused websites and applications across WordPress, Figma, Webflow and custom solutions.",
+      "Responsive, user-focused websites, branding, and applications delivered across 24 countries worldwide.",
   },
   {
-    value: 25,
-    suffix: "+",
-    label: "Team Specialists",
+    value: 2015,
+    suffix: "",
+    label: "Active Since",
     description:
-      "A multidisciplinary team of designers and developers covering branding, graphic design, responsive websites, applications and complete digital solutions.",
+      "A multidisciplinary studio covering branding, graphic design, responsive websites, applications and complete digital solutions.",
   },
 ];
 
@@ -76,7 +76,7 @@ export const impactStory: ImpactStoryBlock[] = [
   {
     number: "02",
     title: "Growth",
-    body: "From the first website to complete brand systems — 1,000+ projects supported, hundreds of products shipped and work delivered across 24 countries.",
+    body: "From the first website to complete brand systems — 160+ projects supported, digital products shipped and work delivered across 24 countries.",
   },
   {
     number: "03",

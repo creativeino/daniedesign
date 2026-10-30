@@ -6,14 +6,24 @@ import PageHero from "@/components/shared/PageHero";
 import SplitBlock from "@/components/solutions/SplitBlock";
 import Capabilities from "@/components/solutions/Capabilities";
 import SolutionOutro from "@/components/solutions/SolutionOutro";
+import { getServices } from "@/lib/api";
+import { services as fallbackServices } from "@/data/services";
 
 export const metadata: Metadata = {
   title: "UI/UX Design",
   description:
     "User-focused product and interface design covering research, structure, usability testing and interactive prototypes.",
+  alternates: {
+    canonical: "/services/ui-ux",
+  },
 };
 
-export default function UiUxPage() {
+export default async function UiUxPage() {
+  const allServices = await getServices();
+  const serviceData =
+    allServices.find((s) => s.href === "/services/ui-ux" || s.title.toLowerCase().includes("ui/ux")) ??
+    fallbackServices[1];
+  const capabilities = serviceData?.capabilities?.length ? serviceData.capabilities : fallbackServices[1].capabilities;
   return (
     <main>
       <PageHero
@@ -73,17 +83,7 @@ export default function UiUxPage() {
       <section className="py-24 md:py-32">
         <Capabilities
           title="UI/UX capabilities."
-          items={[
-            "UX Consulting",
-            "Research",
-            "Usability Testing",
-            "Information Architecture",
-            "Wireframes",
-            "Prototypes",
-            "UI Design",
-            "Design Systems",
-            "Mobile App Design",
-          ]}
+          items={capabilities}
         />
       </section>
 
@@ -91,9 +91,8 @@ export default function UiUxPage() {
         statsTitle="Design that shows up in the numbers."
         stats={[
           { value: 98, suffix: "%", label: "Client satisfaction" },
-          { value: 120, suffix: "+", label: "Products shipped" },
           { value: 24, suffix: "", label: "Countries served" },
-          { value: 12, suffix: "+", label: "Years of craft" },
+          { value: 2015, suffix: "", label: "Active since" },
         ]}
         processTitle="The design process."
         processTagline="Seven focused phases — from raw research to a developer-ready handoff, one connected design team."

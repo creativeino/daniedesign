@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "Blog & Insights",
   description:
     "Explore strategic insights on branding, full-service marketing, web development, and startup growth from Danie Design.",
+  alternates: {
+    canonical: "/blog",
+  },
 };
 
 export default function BlogPage() {

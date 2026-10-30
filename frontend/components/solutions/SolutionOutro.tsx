@@ -37,7 +37,7 @@ export default function SolutionOutro({
             text={statsTitle}
             className="display mb-12 max-w-2xl text-3xl font-medium leading-[1.05] tracking-tight md:text-5xl"
           />
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {stats.map((stat) => (
               <TiltCard
                 key={stat.label}

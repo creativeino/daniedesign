@@ -205,12 +205,12 @@ export default function AgencyIntro() {
               className="rounded-2xl"
             >
               <div className="h-full w-full rounded-2xl border border-white/[0.08] bg-[#121214] p-5">
-                <p className="display text-3xl font-bold text-accent md:text-4xl">900+</p>
+                <p className="display text-3xl font-bold text-accent md:text-4xl">98%</p>
                 <p className="mt-1 font-mono text-xs font-semibold text-ink">
-                  Clients Worldwide
+                  Client Satisfaction
                 </p>
                 <p className="mt-1 text-[11px] leading-snug text-ink/50">
-                  Thousands plus 5-star reviews on PeoplePerHour &amp; global platforms.
+                  Client satisfaction and repeat partnerships worldwide.
                 </p>
               </div>
             </TiltCard>
@@ -221,12 +221,12 @@ export default function AgencyIntro() {
               className="rounded-2xl"
             >
               <div className="h-full w-full rounded-2xl border border-white/[0.08] bg-[#121214] p-5">
-                <p className="display text-3xl font-bold text-accent md:text-4xl">1,000+</p>
+                <p className="display text-3xl font-bold text-accent md:text-4xl">160+</p>
                 <p className="mt-1 font-mono text-xs font-semibold text-ink">
-                  Completed Projects
+                  Projects Shipped
                 </p>
                 <p className="mt-1 text-[11px] leading-snug text-ink/50">
-                  98% client satisfaction rate across branding, UI/UX, and apps.
+                  Successful projects delivered across 24 countries.
                 </p>
               </div>
             </TiltCard>

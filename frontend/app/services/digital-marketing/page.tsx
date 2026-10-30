@@ -6,14 +6,24 @@ import PageHero from "@/components/shared/PageHero";
 import SplitBlock from "@/components/solutions/SplitBlock";
 import Capabilities from "@/components/solutions/Capabilities";
 import SolutionOutro from "@/components/solutions/SolutionOutro";
+import { getServices } from "@/lib/api";
+import { services as fallbackServices } from "@/data/services";
 
 export const metadata: Metadata = {
   title: "Digital Marketing",
   description:
     "Digital growth support combining online marketing, search visibility, strategy and audience research.",
+  alternates: {
+    canonical: "/services/digital-marketing",
+  },
 };
 
-export default function DigitalMarketingPage() {
+export default async function DigitalMarketingPage() {
+  const allServices = await getServices();
+  const serviceData =
+    allServices.find((s) => s.href === "/services/digital-marketing" || s.title.toLowerCase().includes("marketing")) ??
+    fallbackServices[3];
+  const capabilities = serviceData?.capabilities?.length ? serviceData.capabilities : fallbackServices[3].capabilities;
   return (
     <main>
       <PageHero
@@ -71,16 +81,7 @@ export default function DigitalMarketingPage() {
       <section className="py-24 md:py-32">
         <Capabilities
           title="Marketing capabilities."
-          items={[
-            "Online Marketing",
-            "SEO",
-            "Strategy",
-            "Market Research",
-            "Social Media",
-            "Campaign Management",
-            "Content",
-            "Analytics",
-          ]}
+          items={capabilities}
         />
       </section>
 
@@ -88,9 +89,8 @@ export default function DigitalMarketingPage() {
         statsTitle="Growth you can track."
         stats={[
           { value: 98, suffix: "%", label: "Client satisfaction" },
-          { value: 120, suffix: "+", label: "Campaigns run" },
           { value: 24, suffix: "", label: "Countries served" },
-          { value: 12, suffix: "+", label: "Years of craft" },
+          { value: 2015, suffix: "", label: "Active since" },
         ]}
         processTitle="The growth process."
         processTagline="Six focused phases — from research to reporting, one connected growth team."

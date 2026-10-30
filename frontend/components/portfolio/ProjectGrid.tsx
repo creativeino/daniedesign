@@ -7,13 +7,19 @@ import { Project } from "@/data/projects";
 import ProjectCard from "./ProjectCard";
 import ProjectFilters from "./ProjectFilters";
 
-export default function ProjectGrid() {
+export default function ProjectGrid({
+  initialProjects = [],
+}: {
+  initialProjects?: Project[];
+}) {
   const [active, setActive] = useState("All");
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
 
   useEffect(() => {
-    getProjects().then(setProjects).catch(() => {});
-  }, []);
+    if (initialProjects.length === 0) {
+      getProjects().then(setProjects).catch(() => {});
+    }
+  }, [initialProjects.length]);
 
   const filtered = active === "All" ? projects : projects.filter((p) => p.category === active);
 

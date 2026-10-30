@@ -6,14 +6,24 @@ import PageHero from "@/components/shared/PageHero";
 import SplitBlock from "@/components/solutions/SplitBlock";
 import Capabilities from "@/components/solutions/Capabilities";
 import SolutionOutro from "@/components/solutions/SolutionOutro";
+import { getServices } from "@/lib/api";
+import { services as fallbackServices } from "@/data/services";
 
 export const metadata: Metadata = {
   title: "Website Development",
   description:
     "Website and application development across WordPress, Webflow, Laravel, React and Flutter — responsive, fast and built to scale.",
+  alternates: {
+    canonical: "/services/web-development",
+  },
 };
 
-export default function WebDevelopmentPage() {
+export default async function WebDevelopmentPage() {
+  const allServices = await getServices();
+  const serviceData =
+    allServices.find((s) => s.href === "/services/web-development" || s.title.toLowerCase().includes("web")) ??
+    fallbackServices[2];
+  const capabilities = serviceData?.capabilities?.length ? serviceData.capabilities : fallbackServices[2].capabilities;
   return (
     <main>
       <PageHero
@@ -62,18 +72,7 @@ export default function WebDevelopmentPage() {
       <section className="py-24 md:py-32">
         <Capabilities
           title="Development capabilities."
-          items={[
-            "WordPress",
-            "Webflow",
-            "Laravel",
-            "React",
-            "Flutter",
-            "React.js",
-            "Design Systems",
-            "Custom Development",
-            "Responsive Websites",
-            "Mobile Applications",
-          ]}
+          items={capabilities}
         />
       </section>
 
@@ -81,9 +80,8 @@ export default function WebDevelopmentPage() {
         statsTitle="Built to be measured."
         stats={[
           { value: 98, suffix: "%", label: "Client satisfaction" },
-          { value: 90, suffix: "+", label: "Lighthouse scores" },
           { value: 24, suffix: "", label: "Countries served" },
-          { value: 12, suffix: "+", label: "Years of craft" },
+          { value: 2015, suffix: "", label: "Active since" },
         ]}
         processTitle="The development process."
         processTagline="Seven focused phases — from discovery to a fast, scalable site in production."

@@ -9,6 +9,10 @@
 /** Contact details, newsletter/legal notes and social profile links. */
 export const contact = {
   email: "daniedesignz@gmail.com",
+  phone: "+44 7362 042090",
+  phoneDisplay: "+44 7362 042090",
+  phoneTel: "+447362042090",
+  address: "253 Gurney Close, Barking, London IG11 8LB",
   /** Studio location shown in the contact page info boxes. */
   location: "London, United Kingdom",
   locationNote: "Working worldwide, remote-first",
@@ -17,8 +21,8 @@ export const contact = {
   privacyNote:
     "By subscribing you agree to our privacy policy. We never share your data.",
   socials: [
-    { label: "Facebook", href: "https://www.facebook.com/danie.sh.528" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/in/danie-d-34314737/" },
+    { label: "Facebook", href: "https://www.facebook.com/595929813602598" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/company/danie-design" },
     { label: "X", href: "https://x.com/daniedesignz" },
     { label: "Dribbble", href: "https://dribbble.com/daniedesign" },
     { label: "Behance", href: "https://www.behance.net/daniedesigns" },

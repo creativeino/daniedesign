@@ -16,7 +16,7 @@ export default function TeamGrid() {
     <div className="mx-auto max-w-[1440px] px-5 md:px-10">
       <p className="eyebrow mb-6">Team</p>
       <h2 className="display mb-10 max-w-2xl text-3xl font-medium leading-[1.05] tracking-tight md:text-5xl">
-        A multidisciplinary crew of 25+ specialists.
+        A multidisciplinary crew of dedicated specialists.
       </h2>
       <ul className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-ink/10 bg-paper/10 sm:grid-cols-2 lg:grid-cols-3">
         {team.map((member, i) => (

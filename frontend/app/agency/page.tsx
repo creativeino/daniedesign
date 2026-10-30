@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   title: "About Us — Danie Design",
   description:
     "Since 2015, Danie Design crafts digital products with a unique vision to elevate the user experience. Branding, UI/UX, Web & App Development.",
+  alternates: {
+    canonical: "/agency",
+  },
 };
 
 const marqueeItems = [
@@ -57,28 +60,28 @@ const galleryImages = [
 
 const statCards = [
   {
-    value: 900,
-    suffix: "+",
-    label: "Clients World-wide",
-    note: "Thousands plus 5-star reviews on PeoplePerHour & global platforms.",
-  },
-  {
-    value: 1000,
-    suffix: "+",
-    label: "Completed Projects",
-    note: "Branding, UI/UX, websites and apps shipped across 24 countries.",
-  },
-  {
     value: 98,
     suffix: "%",
     label: "Client Satisfaction",
     note: "Built on quality, communication, transparency and care.",
   },
   {
+    value: 160,
+    suffix: "+",
+    label: "Completed Projects",
+    note: "Branding, UI/UX, websites and apps shipped across 24 countries.",
+  },
+  {
+    value: 24,
+    suffix: "",
+    label: "Countries Reached",
+    note: "Delivering design and digital products to clients across the globe.",
+  },
+  {
     value: 10,
     suffix: "+",
     label: "Years of Craft",
-    note: "A decade of creative and digital work for growing brands.",
+    note: "Active since 2015, building creative and digital work for growing brands.",
   },
 ];
 
@@ -143,9 +146,9 @@ export default function AgencyPage() {
         title="Crafting digital products with a unique vision to elevate the user experience."
         intro="Danie Design is a creative studio dedicated to exploring ideas and transforming them into beautifully crafted digital experiences. Our mission is to make design intuitive, inspiring, and impactful for every user."
         meta={[
-          { label: "Clients World-wide", value: "900+" },
-          { label: "Completed Projects", value: "1,000+" },
           { label: "Client Satisfaction", value: "98%" },
+          { label: "Completed Projects", value: "160+" },
+          { label: "Global Reach", value: "24 Countries" },
         ]}
       />
 

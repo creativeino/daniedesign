@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   title: "Services",
   description:
     "Branding, UI/UX design, website development and digital marketing — four connected services from one creative digital agency.",
+  alternates: {
+    canonical: "/services",
+  },
 };
 
 const processSteps = [

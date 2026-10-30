@@ -35,6 +35,7 @@ export default function CountUp({
     }
 
     const obj = { v: 0 };
+    el.textContent = format(obj.v);
     const ctx = gsap.context(() => {
       gsap.to(obj, {
         v: value,
@@ -52,7 +53,7 @@ export default function CountUp({
 
   return (
     <span ref={ref} className={className}>
-      {prefix}0{suffix}
+      {prefix}{value.toFixed(decimals)}{suffix}
     </span>
   );
 }

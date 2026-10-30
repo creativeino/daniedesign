@@ -9,9 +9,9 @@ const awardGroups = [
   {
     platform: "Awwwards",
     total: 15,
-    since: "Since 2014",
+    since: "Since 2015",
     awards: [
-      { name: "Honorable Mention", count: "7x", year: "2014" },
+      { name: "Honorable Mention", count: "7x", year: "2015" },
       { name: "Site of the Day", count: "4x", year: "2016" },
       { name: "Developer Awards", count: "2x", year: "2016" },
       { name: "Site of the Year", count: "1x", year: "2019" },
@@ -21,9 +21,9 @@ const awardGroups = [
   {
     platform: "CSS Design",
     total: 14,
-    since: "Since 2014",
+    since: "Since 2015",
     awards: [
-      { name: "Website of the Day", count: "2x", year: "2014" },
+      { name: "Website of the Day", count: "2x", year: "2015" },
       { name: "Best Innovation", count: "1x", year: "2016" },
       { name: "UX Design", count: "5x", year: "2016" },
       { name: "Creative Design", count: "6x", year: "2019" },
@@ -32,9 +32,9 @@ const awardGroups = [
   {
     platform: "Dribbble",
     total: 4,
-    since: "Since 2014",
+    since: "Since 2015",
     awards: [
-      { name: "Design of the Day", count: "2x", year: "2014" },
+      { name: "Design of the Day", count: "2x", year: "2015" },
       { name: "Site of the Day", count: "2x", year: "2016" },
     ],
   },
