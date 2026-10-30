@@ -106,16 +106,16 @@ export default function CustomCursor() {
       let fx = px;
       let fy = py;
       if (snapRect) {
-        const pull = mode === "badge" ? 0.7 : 0.5;
+        const pull = mode === "badge" ? 0.6 : 0.4;
         fx = px + (snapRect.left + snapRect.width / 2 - px) * pull;
         fy = py + (snapRect.top + snapRect.height / 2 - py) * pull;
       }
 
-      dx += (px - dx) * 0.55;
-      dy += (py - dy) * 0.55;
-      gx += (fx - gx) * 0.11;
-      gy += (fy - gy) * 0.11;
-      const ringEase = pressed ? 0.3 : 0.15;
+      dx += (px - dx) * 0.7;
+      dy += (py - dy) * 0.7;
+      gx += (fx - gx) * 0.2;
+      gy += (fx - gy) * 0.2;
+      const ringEase = pressed ? 0.4 : 0.25;
       rx += (fx - rx) * ringEase;
       ry += (fy - ry) * ringEase;
 

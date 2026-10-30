@@ -47,35 +47,35 @@ export default function TiltCard({
       });
     }
 
-    // Springy rotation + lift + scale — the "premium" feel
+    // Springy rotation + lift + scale — optimized duration for smoothness
     const rotX = gsap.quickTo(inner, "rotationX", {
-      duration: 0.6,
-      ease: "back.out(1.4)",
+      duration: 0.35,
+      ease: "power2.out",
     });
     const rotY = gsap.quickTo(inner, "rotationY", {
-      duration: 0.6,
-      ease: "back.out(1.4)",
+      duration: 0.35,
+      ease: "power2.out",
     });
     const rotZ = gsap.quickTo(inner, "rotationZ", {
-      duration: 0.6,
-      ease: "back.out(1.4)",
+      duration: 0.35,
+      ease: "power2.out",
     });
     const yTo = gsap.quickTo(inner, "y", {
-      duration: 0.6,
-      ease: "back.out(1.2)",
+      duration: 0.35,
+      ease: "power2.out",
     });
     const sTo = gsap.quickTo(inner, "scale", {
-      duration: 0.6,
-      ease: "back.out(1.2)",
+      duration: 0.35,
+      ease: "power2.out",
     });
 
     const onEnter = () => {
-      sTo(1.06);
-      yTo(-12);
+      sTo(1.03);
+      yTo(-6);
       if (shadow) {
         gsap.to(inner, {
-          boxShadow: "0 44px 80px -24px rgba(0, 0, 0, 0.5)",
-          duration: 0.5,
+          boxShadow: "0 28px 50px -16px rgba(0, 0, 0, 0.4)",
+          duration: 0.3,
           overwrite: "auto",
         });
       }
