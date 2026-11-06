@@ -102,22 +102,27 @@ export default function CustomCursor() {
     const tick = () => {
       if (!visible) return;
 
-      // magnetic follow target: blend cursor with hovered element center
+      // Magnetic follow target: blend cursor with hovered element center
       let fx = px;
       let fy = py;
       if (snapRect) {
-        const pull = mode === "badge" ? 0.6 : 0.4;
+        const pull = mode === "badge" ? 0.35 : 0.2;
         fx = px + (snapRect.left + snapRect.width / 2 - px) * pull;
         fy = py + (snapRect.top + snapRect.height / 2 - py) * pull;
       }
 
-      dx += (px - dx) * 0.7;
-      dy += (py - dy) * 0.7;
-      gx += (fx - gx) * 0.2;
-      gy += (fx - gy) * 0.2;
-      const ringEase = pressed ? 0.4 : 0.25;
+      // Dot sticks tightly to real cursor for accurate clicking
+      dx += (px - dx) * 0.85;
+      dy += (py - dy) * 0.85;
+
+      // Ring follows magnetic target smoothly
+      const ringEase = pressed ? 0.45 : 0.3;
       rx += (fx - rx) * ringEase;
       ry += (fy - ry) * ringEase;
+
+      // Orbit ("daniedesign") stays locked to the ring so it never drifts away
+      gx = rx;
+      gy = ry;
 
       const vx = rx - lrx;
       const vy = ry - lry;
@@ -126,10 +131,10 @@ export default function CustomCursor() {
       const speed = Math.hypot(vx, vy);
 
       const stiff = mode === "badge" || pressed;
-      const targetStretch = stiff ? 1 : Math.min(1 + speed * 0.05, 2.2);
+      const targetStretch = stiff ? 1 : Math.min(1 + speed * 0.03, 1.4);
       stretchS += (targetStretch - stretchS) * 0.2;
-      // slight directional lean while gliding (kept small so badge text stays upright)
-      const lean = stiff ? 0 : Math.max(-14, Math.min(14, vy * 1.2)) * (stretchS - 1);
+      // Slight directional lean while gliding
+      const lean = stiff ? 0 : Math.max(-10, Math.min(10, vy * 0.8)) * (stretchS - 1);
       const sX = state.baseScale * stretchS;
       const sY = state.baseScale / Math.sqrt(stretchS);
 
