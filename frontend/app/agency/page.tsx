@@ -18,7 +18,7 @@ import AwardsShowcase from "@/components/solutions/AwardsShowcase";
 import Button from "@/components/shared/Button";
 
 export const metadata: Metadata = {
-  title: "About Us — Danie Design",
+  title: "About Us | Danie Design",
   description:
     "Since 2015, Danie Design crafts digital products with a unique vision to elevate the user experience. Branding, UI/UX, Web & App Development.",
   alternates: {
@@ -142,7 +142,7 @@ export default function AgencyPage() {
   return (
     <main>
       <PageHero
-        eyebrow="Since 2015 — About Danie Design"
+        eyebrow="Since 2015 · About Danie Design"
         title="Crafting digital products with a unique vision to elevate the user experience."
         intro="Danie Design is a creative studio dedicated to exploring ideas and transforming them into beautifully crafted digital experiences. Our mission is to make design intuitive, inspiring, and impactful for every user."
         meta={[
@@ -155,7 +155,7 @@ export default function AgencyPage() {
       {/* Typographic Marquee Band */}
       <section className="border-y border-ink/10 bg-panel/40 py-10 md:py-14">
         <p className="eyebrow mb-6 text-center">
-          Design — Development — Marketing — One studio
+          Design · Development · Marketing · One studio
         </p>
         <Marquee items={marqueeItems} speed={70} separator="✦" />
       </section>
@@ -171,7 +171,7 @@ export default function AgencyPage() {
             />
             <p className="max-w-sm text-sm leading-relaxed text-muted md:text-base">
               A global collective of designers, engineers and strategists
-              working as one team — from first sketch to final build.
+              working as one team from first sketch to final build.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
@@ -223,7 +223,7 @@ export default function AgencyPage() {
                 every project.
               </p>
               <p className="max-w-lg text-sm leading-relaxed text-muted md:text-base">
-                Collaborate with a super down-to-earth, mad-talented team — a collective bunch working
+                Collaborate with a super down-to-earth, mad-talented team: a collective bunch working
                 on incredible projects and building enduring partnerships that extend well beyond the
                 deliverable.
               </p>
@@ -284,7 +284,7 @@ export default function AgencyPage() {
             </div>
             <p className="max-w-sm text-sm leading-relaxed text-muted lg:col-span-5 lg:justify-self-end md:text-base">
               Senior directors, brand strategists, UI/UX creators and full-stack
-              engineers — one collective, many crafts.
+              engineers: one collective, many crafts.
             </p>
           </div>
 

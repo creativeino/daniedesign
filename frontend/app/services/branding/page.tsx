@@ -27,9 +27,9 @@ export default async function BrandingPage() {
   return (
     <main>
       <PageHero
-        eyebrow="Service — Branding"
+        eyebrow="Service, Branding"
         title="Build a Stronger Brand Foundation."
-        intro="We help businesses clarify their identity, position and visual language — then build the systems that keep the brand consistent everywhere it shows up."
+        intro="We help businesses clarify their identity, position and visual language, then build the systems that keep the brand consistent everywhere it shows up."
         meta={[
           { label: "From", value: "Strategy" },
           { label: "To", value: "Rollout" },
@@ -43,7 +43,7 @@ export default async function BrandingPage() {
           title="Positioning before pixels."
           copy={[
             "A recognizable brand starts with a clear answer to a simple question: what makes you different, and who cares? We map your market, your audience and your competitors before a single logo sketch.",
-            "The result is a strategy document the whole team can stand behind — and a brief that makes creative decisions faster and easier.",
+            "The result is a strategy document the whole team can stand behind, and a brief that makes creative decisions faster and easier.",
           ]}
           image="https://picsum.photos/seed/danie-branding/1200/900"
           imageAlt="Abstract artwork for brand strategy"
@@ -63,7 +63,7 @@ export default async function BrandingPage() {
           title="A system, not a logo."
           copy={[
             "Identity work covers the logo, color, typography, layout grids and imagery. But what makes it valuable is the system: flexible enough for new products and campaigns, strict enough to stay recognizable.",
-            "We deliver the full toolkit — from the mark itself to the guidelines that keep it consistent.",
+            "We deliver the full toolkit, from the mark itself to the guidelines that keep it consistent.",
           ]}
           image="https://picsum.photos/seed/danie-branding-3/1200/900"
           imageAlt="Abstract artwork for visual identity"
@@ -72,7 +72,7 @@ export default async function BrandingPage() {
           eyebrow="Applications"
           title="Built to be used."
           copy={[
-            "A brand only matters where people meet it. We design the applications that carry the identity into the world — packaging, stationery, social media assets, presentations, signage and digital surfaces.",
+            "A brand only matters where people meet it. We design the applications that carry the identity into the world, packaging, stationery, social media assets, presentations, signage and digital surfaces.",
             "Everything ships with templates and guidelines, so your team can execute without us in the room.",
           ]}
           image="https://picsum.photos/seed/danie-branding-4/1200/900"
@@ -96,7 +96,7 @@ export default async function BrandingPage() {
           { value: 2015, suffix: "", label: "Active since" },
         ]}
         processTitle="The branding process."
-        processTagline="Six focused phases — from first conversation to a brand that ships everywhere."
+        processTagline="Six focused phases, from first conversation to a brand that ships everywhere."
         processSteps={[
           {
             number: "01",
@@ -119,7 +119,7 @@ export default async function BrandingPage() {
             timeframe: "5–7 Days",
             title: "Concept",
             description:
-              "Two creative directions — moodboards and visual routes to react against.",
+              "Two creative directions, moodboards and visual routes to react against.",
             deliverables: ["Moodboards", "Concept Routes", "Direction Pick"],
           },
           {
@@ -135,7 +135,7 @@ export default async function BrandingPage() {
             timeframe: "1 Week",
             title: "Guidelines",
             description:
-              "The rules of the road — a brand book that keeps everything recognizable.",
+              "The rules of the road, a brand book that keeps everything recognizable.",
             deliverables: ["Brand Book", "Usage Rules", "Templates"],
           },
           {
@@ -148,7 +148,7 @@ export default async function BrandingPage() {
           },
         ]}
         ctaTitle="Have a brand that looks like everyone else?"
-        ctaCopy="Tell us where you are today — we'll map the identity system that makes you unmistakable."
+        ctaCopy="Tell us where you are today, we'll map the identity system that makes you unmistakable."
         category="Branding"
       />
     </main>

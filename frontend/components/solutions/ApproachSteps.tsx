@@ -35,7 +35,7 @@ const phases = [
     number: "03",
     phase: "Design Implementation",
     description:
-      "Production-grade execution — user flows, annotations and interactions choreographed to 60fps.",
+      "Production-grade execution: user flows, annotations and interactions choreographed to 60fps.",
     items: [
       "Design Use Cases",
       "User Flows",
@@ -62,7 +62,7 @@ export default function ApproachSteps() {
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-muted lg:col-span-5 lg:justify-self-end md:text-base">
             Three phases. One disciplined framework. Every project moves
-            through the same loop — discover, design, implement.
+            through the same loop: discover, design, implement.
           </p>
         </div>
 

@@ -202,8 +202,8 @@ export default function Footer() {
               className="display text-4xl font-bold leading-[1.03] tracking-tight text-ink sm:text-5xl lg:text-6xl xl:text-7xl"
             />
             <p className="mt-6 max-w-md text-sm leading-relaxed text-muted md:text-base">
-              One call is all it takes — tell us about your brand, your goals and
-              your timeline. We&apos;ll bring the strategy, craft and code.
+              One call is all it takes. Tell us about your brand, your goals and
+              your timeline, and we&apos;ll bring the strategy, craft and code.
             </p>
           </div>
           <MagneticCTA />
@@ -221,7 +221,7 @@ export default function Footer() {
             />
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted">
               A full-service creative digital agency focused on design,
-              development and marketing — with international client relationships.
+              development and marketing with international client relationships.
             </p>
             <div className="mt-5 flex flex-col gap-2">
               <a

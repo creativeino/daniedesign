@@ -76,12 +76,12 @@ export const impactStory: ImpactStoryBlock[] = [
   {
     number: "02",
     title: "Growth",
-    body: "From the first website to complete brand systems — 160+ projects supported, digital products shipped and work delivered across 24 countries.",
+    body: "From the first website to complete brand systems: 160+ projects supported, digital products shipped and work delivered across 24 countries.",
   },
   {
     number: "03",
     title: "Craft",
-    body: "Design is only half the story. Every pixel is engineered — responsive builds, performance budgets and interfaces that feel as good as they look.",
+    body: "Design is only half the story. Every pixel is engineered with responsive builds, performance budgets and interfaces that feel as good as they look.",
   },
   {
     number: "04",

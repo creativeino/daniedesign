@@ -15,7 +15,7 @@ import { contact } from "@/data/contact";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "How Danie Design collects, uses and protects your personal information — what we gather, why, and your rights.",
+    "How Danie Design collects, uses and protects your personal information, what we gather, why, and your rights.",
   alternates: {
     canonical: "/privacy-policy",
   },
@@ -31,12 +31,12 @@ const tldrCards = [
   {
     icon: ShieldCheck,
     title: "What we collect",
-    text: "Only what you send us on purpose — your contact form inquiry and, if you opt in, your newsletter email.",
+    text: "Only what you send us on purpose, your contact form inquiry and, if you opt in, your newsletter email.",
   },
   {
     icon: Lock,
     title: "How we use it",
-    text: "To reply to your project inquiry, follow up honestly, and — if you asked — send occasional newsletter updates.",
+    text: "To reply to your project inquiry, follow up honestly, and, if you asked, send occasional newsletter updates.",
   },
   {
     icon: EyeOff,
@@ -60,10 +60,10 @@ const sections: PolicySection[] = [
       "We only collect what you deliberately give us through the forms on this site:",
     ],
     bullets: [
-      "Contact form — your name, email address, company name (optional), the service you're interested in and your message.",
-      "Newsletter — the email address you submit when subscribing to updates.",
-      "Analytics — Google Analytics collects standard visit information (pages viewed, referring site, approximate location, device and browser) so we understand how the site is used.",
-      "Admin area — a login token stored in your browser's local storage so authorised team members stay signed in. This applies to our staff only, not to visitors.",
+      "Contact form, your name, email address, company name (optional), the service you're interested in and your message.",
+      "Newsletter, the email address you submit when subscribing to updates.",
+      "Analytics, Google Analytics collects standard visit information (pages viewed, referring site, approximate location, device and browser) so we understand how the site is used.",
+      "Admin area, a login token stored in your browser's local storage so authorised team members stay signed in. This applies to our staff only, not to visitors.",
     ],
   },
   {
@@ -78,7 +78,7 @@ const sections: PolicySection[] = [
   {
     heading: "Cookies and Tracking",
     paragraphs: [
-      "We use Google Analytics, which sets a first-party analytics cookie to count page views and sessions. It is used for measurement only — not for advertising or cross-site tracking. Beyond that, this website does not set advertising or tracking cookies. We will always update this policy before introducing any new tracking technology.",
+      "We use Google Analytics, which sets a first-party analytics cookie to count page views and sessions. It is used for measurement only, not for advertising or cross-site tracking. Beyond that, this website does not set advertising or tracking cookies. We will always update this policy before introducing any new tracking technology.",
     ],
   },
   {
@@ -94,7 +94,7 @@ const sections: PolicySection[] = [
   {
     heading: "Data Retention",
     paragraphs: [
-      "Inquiry and newsletter data is kept for as long as needed to serve the purposes described above — typically the life of a client relationship plus a reasonable period afterwards. You can ask us to delete your data at any time (see Contact Us).",
+      "Inquiry and newsletter data is kept for as long as needed to serve the purposes described above, typically the life of a client relationship plus a reasonable period afterwards. You can ask us to delete your data at any time (see Contact Us).",
     ],
   },
   {
@@ -128,7 +128,7 @@ export default function PrivacyPolicyPage() {
   return (
     <main>
       <PageHero
-        eyebrow="Legal — Privacy Policy"
+        eyebrow="Legal, Privacy Policy"
         title="Your data stays your data."
         intro="The short version: we collect only what you send us through our contact or newsletter forms, plus anonymous traffic stats via Google Analytics. We never sell your data, and there are no advertising trackers on this site. The full details are below."
         meta={[
@@ -148,7 +148,7 @@ export default function PrivacyPolicyPage() {
               className="display max-w-xl text-3xl font-medium leading-[1.05] tracking-tight md:text-5xl"
             />
             <p className="max-w-sm text-sm leading-relaxed text-muted md:text-base">
-              No legalese needed for the headline — here&apos;s what this whole
+              No legalese needed for the headline, here&apos;s what this whole
               page comes down to.
             </p>
           </div>
@@ -283,7 +283,7 @@ export default function PrivacyPolicyPage() {
                   >
                     {contact.email}
                   </a>{" "}
-                  — we&apos;ll get back to you.
+                 , we&apos;ll get back to you.
                 </p>
               </article>
             </div>

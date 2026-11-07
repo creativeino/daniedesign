@@ -42,9 +42,9 @@ export const projects: Project[] = [
     services: ["Brand Strategy", "Visual Identity", "Packaging"],
     featured: true,
     challenge:
-      "Ember was a beloved local roaster with strong coffee and an inconsistent visual presence. As retail orders grew, the brand needed to look as refined as the product — without losing the warmth regulars recognized.",
+      "Ember was a beloved local roaster with strong coffee and an inconsistent visual presence. As retail orders grew, the brand needed to look as refined as the product without losing the warmth regulars recognized.",
     approach:
-      "We started with positioning workshops and a competitive audit, then distilled the brand into a single idea: fire, patience and craft. Everything — from the logotype to the roast labels — was built around that idea.",
+      "We started with positioning workshops and a competitive audit, then distilled the brand into a single idea: fire, patience and craft. Everything, from the logotype to the roast labels, was built around that idea.",
     design:
       "The identity pairs a bold wordmark with a flexible flame motif that scales from a 4mm coffee bag stamp to a storefront sign. A warm, earthy palette and two display typefaces give the brand editorial confidence.",
     development:
@@ -54,7 +54,7 @@ export const projects: Project[] = [
     gallery: ["https://picsum.photos/seed/danie-gallery-01/1200/900", "https://picsum.photos/seed/danie-gallery-02/1200/900", "https://picsum.photos/seed/danie-gallery-03/1200/900"],
     features: [
       "Modular packaging system that scales from bag stamps to storefront signs",
-      "A single brand idea — fire, patience and craft — applied across every touchpoint",
+      "A single brand idea (fire, patience and craft) applied across every touchpoint",
       "Warm, earthy palette with two display typefaces for editorial confidence",
       "Webflow storefront carrying the identity through to checkout",
     ],
@@ -110,7 +110,7 @@ export const projects: Project[] = [
     category: "Web",
     year: "2024",
     description:
-      "An award-style editorial website for an architecture practice — heavy imagery, restrained motion, obsessive typography.",
+      "An award-style editorial website for an architecture practice: heavy imagery, restrained motion, obsessive typography.",
     image: "https://picsum.photos/seed/danie-lumen/1600/1100",
     services: ["Website Design", "Web Development", "Art Direction"],
     featured: true,
@@ -140,7 +140,7 @@ export const projects: Project[] = [
     approach:
       "We rebuilt their content around shopping intent, launched a technical SEO cleanup, and unified paid social with a single creative system built from the brand identity.",
     design:
-      "Campaign creative used the brand's fresh, food-led photography system with short, honest copy — a deliberate contrast to the discount-heavy tone of the category.",
+      "Campaign creative used the brand's fresh, food-led photography system with short, honest copy, a deliberate contrast to the discount-heavy tone of the category.",
     development:
       "A headless landing-page system let the marketing team launch new campaigns in hours instead of weeks, with built-in A/B testing and analytics hooks.",
     outcome:
@@ -159,7 +159,7 @@ export const projects: Project[] = [
     challenge:
       "Sable's products were beautiful; its brand was invisible. Wholesale buyers couldn't remember the studio, and social feeds looked like a different brand every week.",
     approach:
-      "We built the identity from the material itself — glaze, clay and kiln marks — translating the maker's process into a flexible visual language.",
+      "We built the identity from the material itself (glaze, clay and kiln marks), translating the maker's process into a flexible visual language.",
     design:
       "The system pairs a quiet serif for storytelling with a functional sans for commerce, over a warm, clay-toned palette. Pattern motifs echo the studio's signature glaze textures.",
     development:
@@ -178,11 +178,11 @@ export const projects: Project[] = [
     image: "https://picsum.photos/seed/danie-arc/1600/1100",
     services: ["Website Design", "Webflow Development", "SEO"],
     challenge:
-      "Arc Legal's site looked credible but converted poorly — visitors couldn't tell which practice areas the firm actually led in, and the contact path was buried.",
+      "Arc Legal's site looked credible but converted poorly as visitors couldn't tell which practice areas the firm actually led in, and the contact path was buried.",
     approach:
       "We rebuilt the information architecture around practice depth rather than firm history, then engineered every page toward a single, obvious next step.",
     design:
-      "A restrained, trustworthy visual system with strong typography and courtroom photography. Trust signals — verdicts, credentials, recognitions — appear consistently near decision points.",
+      "A restrained, trustworthy visual system with strong typography and courtroom photography. Trust signals (verdicts, credentials, recognitions) appear consistently near decision points.",
     development:
       "Webflow build with a CMS for case studies, strict technical SEO, and an integrated form pipeline with CRM routing and team notifications.",
     outcome:
@@ -203,7 +203,7 @@ export const projects: Project[] = [
     approach:
       "We designed around a single question per screen: 'What should I do next?' Research sessions with amateur and competitive athletes shaped a goal-first navigation model.",
     design:
-      "A bold, athletic visual language — dense but ordered, with big numbers, high-contrast charts and a dark mode designed first.",
+      "A bold, athletic visual language: dense but ordered, with big numbers, high-contrast charts and a dark mode designed first.",
     development:
       "A token-based design system shipped alongside the redesign, cutting the client's UI implementation time on new features by roughly 40%.",
     outcome:

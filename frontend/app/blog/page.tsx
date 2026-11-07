@@ -21,7 +21,7 @@ export default function BlogPage() {
       <PageHero
         eyebrow="Journal &amp; Insights"
         title="Perspectives on craft, code, and scale."
-        intro="Direct thinking from the Danie Design studio — strategy breakdowns, technical teardowns, and market playbooks to grow modern brands."
+        intro="Direct thinking from the Danie Design studio covering strategy breakdowns, technical teardowns, and market playbooks to grow modern brands."
         meta={[
           { label: "Published Articles", value: String(blogPosts.length) },
           { label: "Execution Squad", value: "100% In-House" },

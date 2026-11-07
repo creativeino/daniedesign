@@ -37,8 +37,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://daniedesign.com";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Danie Design — Creative, Design & Web Development Studio",
-    template: "%s — Danie Design",
+    default: "Danie Design | Creative, Design & Web Development Studio",
+    template: "%s | Danie Design",
   },
   description:
     "Danie Design is a full-service creative digital agency. We build recognizable brands, high-performance websites, and digital experiences that scale businesses worldwide.",
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     siteName: "Danie Design",
-    title: "Danie Design — Creative, Design & Web Development Studio",
+    title: "Danie Design | Creative, Design & Web Development Studio",
     description:
       "Full-service creative digital agency. We build recognizable brands, high-performance websites, and digital experiences that scale businesses worldwide.",
     images: [
@@ -78,13 +78,13 @@ export const metadata: Metadata = {
         url: "/images/hero.jpg",
         width: 1200,
         height: 630,
-        alt: "Danie Design — Creative Studio",
+        alt: "Danie Design | Creative Studio",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Danie Design — Creative, Design & Web Development Studio",
+    title: "Danie Design | Creative, Design & Web Development Studio",
     description:
       "Full-service creative digital agency. We craft enduring brand identities and modern high-speed web platforms.",
     images: ["/images/hero.jpg"],

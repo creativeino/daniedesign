@@ -114,7 +114,7 @@ export default function ContactForm() {
           Message received.
         </h2>
         <p className="max-w-md text-sm leading-relaxed text-muted">
-          Thanks for reaching out — we&apos;ll get back to you within one business
+          Thanks for reaching out! We&apos;ll get back to you within one business
           day. Meanwhile, you can also write to us directly at{" "}
           <a
             href={`mailto:${contact.email}`}

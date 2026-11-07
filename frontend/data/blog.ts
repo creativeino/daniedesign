@@ -31,7 +31,7 @@ export const blogPosts: BlogPost[] = [
     date: "May 2025",
     readTime: "4 min read",
     excerpt:
-      "Discover the comprehensive capabilities of an end-to-end design and engineering studio — from brand architecture to custom web development and growth marketing.",
+      "Discover the comprehensive capabilities of an end-to-end design and engineering studio, from brand architecture to custom web development and growth marketing.",
     image: "https://daniedesign.com/wp-content/uploads/2025/05/ax-blog-05.jpg",
     featured: true,
     content: [

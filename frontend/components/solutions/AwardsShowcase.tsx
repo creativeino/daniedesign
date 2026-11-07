@@ -58,13 +58,13 @@ export default function AwardsShowcase() {
             <p className="eyebrow mb-6">Awards</p>
             <SplitText
               as="h2"
-              text="We believe in quality, not quantity — that&apos;s why we&apos;re great."
+              text="We believe in quality, not quantity. That&apos;s why we&apos;re great."
               className="display text-3xl font-medium leading-[1.05] tracking-tight md:text-5xl"
             />
           </div>
           <div className="flex flex-col gap-4 lg:col-span-5 lg:justify-self-end">
             <p className="max-w-sm text-sm leading-relaxed text-muted md:text-base">
-              International recognition for craft, UX and creative design —
+              International recognition for craft, UX and creative design,
               earned the slow way, one project at a time.
             </p>
             <div className="flex items-baseline gap-3">

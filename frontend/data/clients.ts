@@ -25,7 +25,7 @@ export const clientBlurbs = [
   {
     name: "Northline",
     quote:
-      "They rebuilt our product experience from the ground up — and our activation numbers prove it.",
+      "They rebuilt our product experience from the ground up, and our activation numbers prove it.",
   },
   {
     name: "Ember Coffee",

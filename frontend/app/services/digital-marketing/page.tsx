@@ -27,9 +27,9 @@ export default async function DigitalMarketingPage() {
   return (
     <main>
       <PageHero
-        eyebrow="Service — Digital Marketing"
+        eyebrow="Service, Digital Marketing"
         title="Build Visibility. Create Demand. Grow."
-        intro="We turn digital attention into business growth — through search visibility, market research, social channels and campaigns built on strategy, not guesswork."
+        intro="We turn digital attention into business growth, through search visibility, market research, social channels and campaigns built on strategy, not guesswork."
         meta={[
           { label: "From", value: "Research" },
           { label: "To", value: "Reporting" },
@@ -51,7 +51,7 @@ export default async function DigitalMarketingPage() {
           eyebrow="SEO & Content"
           title="Be found by people who are already looking."
           copy={[
-            "Technical SEO, search-intent content and authority building work together to grow organic visibility — the channel that compounds instead of resetting every month.",
+            "Technical SEO, search-intent content and authority building work together to grow organic visibility, the channel that compounds instead of resetting every month.",
           ]}
           image="https://picsum.photos/seed/danie-marketing-2/1200/900"
           imageAlt="Abstract artwork for SEO"
@@ -61,7 +61,7 @@ export default async function DigitalMarketingPage() {
           eyebrow="Campaigns & Social"
           title="Creative that earns the click."
           copy={[
-            "Paid campaigns and organic social run on one creative system, built from the brand itself. Consistent visual language, honest copy and constant testing — from awareness to conversion.",
+            "Paid campaigns and organic social run on one creative system, built from the brand itself. Consistent visual language, honest copy and constant testing, from awareness to conversion.",
           ]}
           image="https://picsum.photos/seed/danie-marketing-3/1200/900"
           imageAlt="Abstract artwork for campaigns"
@@ -70,7 +70,7 @@ export default async function DigitalMarketingPage() {
           eyebrow="Analytics & Reporting"
           title="Every channel held accountable."
           copy={[
-            "We measure what matters — pipeline and revenue, not vanity metrics. Monthly reporting shows what worked, what didn't, and what we're doing about it next.",
+            "We measure what matters, pipeline and revenue, not vanity metrics. Monthly reporting shows what worked, what didn't, and what we're doing about it next.",
           ]}
           image="https://picsum.photos/seed/danie-marketing-4/1200/900"
           imageAlt="Abstract artwork for analytics"
@@ -93,7 +93,7 @@ export default async function DigitalMarketingPage() {
           { value: 2015, suffix: "", label: "Active since" },
         ]}
         processTitle="The growth process."
-        processTagline="Six focused phases — from research to reporting, one connected growth team."
+        processTagline="Six focused phases, from research to reporting, one connected growth team."
         processSteps={[
           {
             number: "01",
@@ -140,12 +140,12 @@ export default async function DigitalMarketingPage() {
             timeframe: "Monthly",
             title: "Reporting",
             description:
-              "Pipeline and revenue reporting — what worked, what didn't, what's next.",
+              "Pipeline and revenue reporting, what worked, what didn't, what's next.",
             deliverables: ["Monthly Report", "ROI Analysis", "Next Moves"],
           },
         ]}
         ctaTitle="Ready to turn attention into revenue?"
-        ctaCopy="Tell us where your growth is stuck — we'll build the channel plan and hold it accountable."
+        ctaCopy="Tell us where your growth is stuck, we'll build the channel plan and hold it accountable."
         category="Marketing"
       />
     </main>

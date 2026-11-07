@@ -27,9 +27,9 @@ export default async function UiUxPage() {
   return (
     <main>
       <PageHero
-        eyebrow="Service — UI/UX Design"
+        eyebrow="Service, UI/UX Design"
         title="Design Digital Experiences Around Real People."
-        intro="We create digital products that are useful and intuitive — grounded in research, structured clearly, prototyped early and tested before they ship."
+        intro="We create digital products that are useful and intuitive, grounded in research, structured clearly, prototyped early and tested before they ship."
         meta={[
           { label: "From", value: "Research" },
           { label: "To", value: "Handoff" },
@@ -42,7 +42,7 @@ export default async function UiUxPage() {
           eyebrow="Research & Strategy"
           title="Understand users before designing screens."
           copy={[
-            "Interviews, analytics, competitive review and usability observation — we gather the evidence that turns design decisions from opinions into answers.",
+            "Interviews, analytics, competitive review and usability observation, we gather the evidence that turns design decisions from opinions into answers.",
             "The output is a UX strategy: who the product serves, what they're trying to do, and where the product currently fails them.",
           ]}
           image="https://picsum.photos/seed/danie-uiux/1200/900"
@@ -53,7 +53,7 @@ export default async function UiUxPage() {
           title="Structure that makes sense."
           copy={[
             "Before anything looks pretty, the product needs to make sense. We map user flows, define the information architecture and wireframe every key screen in black and white.",
-            "This is where the expensive mistakes get caught — on paper, not in production.",
+            "This is where the expensive mistakes get caught, on paper, not in production.",
           ]}
           image="https://picsum.photos/seed/danie-uiux-2/1200/900"
           imageAlt="Abstract artwork for wireframing"
@@ -63,7 +63,7 @@ export default async function UiUxPage() {
           eyebrow="Visual Design & Prototyping"
           title="Interfaces people enjoy using."
           copy={[
-            "High-fidelity UI design brings the structure to life — typography, color, spacing, motion and states. Clickable prototypes let stakeholders and testers feel the product before a line of production code exists.",
+            "High-fidelity UI design brings the structure to life, typography, color, spacing, motion and states. Clickable prototypes let stakeholders and testers feel the product before a line of production code exists.",
           ]}
           image="https://picsum.photos/seed/danie-uiux-3/1200/900"
           imageAlt="Abstract artwork for interface design"
@@ -72,7 +72,7 @@ export default async function UiUxPage() {
           eyebrow="Testing & Design Systems"
           title="Prove it, then package it."
           copy={[
-            "Usability testing validates the flows with real users, and the fixes feed straight back into the design. A token-based design system keeps the product consistent as it grows — and hands developers everything they need.",
+            "Usability testing validates the flows with real users, and the fixes feed straight back into the design. A token-based design system keeps the product consistent as it grows, and hands developers everything they need.",
           ]}
           image="https://picsum.photos/seed/danie-uiux-4/1200/900"
           imageAlt="Abstract artwork for usability testing"
@@ -95,7 +95,7 @@ export default async function UiUxPage() {
           { value: 2015, suffix: "", label: "Active since" },
         ]}
         processTitle="The design process."
-        processTagline="Seven focused phases — from raw research to a developer-ready handoff, one connected design team."
+        processTagline="Seven focused phases, from raw research to a developer-ready handoff, one connected design team."
         processSteps={[
           {
             number: "01",
@@ -110,7 +110,7 @@ export default async function UiUxPage() {
             timeframe: "1 Week",
             title: "User Flows",
             description:
-              "Mapping every journey users take through the product — before any screen is designed.",
+              "Mapping every journey users take through the product, before any screen is designed.",
             deliverables: ["Journey Maps", "Flow Diagrams", "Edge Cases"],
           },
           {
@@ -126,7 +126,7 @@ export default async function UiUxPage() {
             timeframe: "2 Weeks",
             title: "Visual Design",
             description:
-              "High-fidelity UI — typography, color, spacing, motion and states that people enjoy using.",
+              "High-fidelity UI, typography, color, spacing, motion and states that people enjoy using.",
             deliverables: ["UI Screens", "Style Guide", "Motion Specs"],
           },
           {
@@ -142,7 +142,7 @@ export default async function UiUxPage() {
             timeframe: "3–5 Days",
             title: "Testing",
             description:
-              "Usability tests with real users — fixes feed straight back into the design.",
+              "Usability tests with real users, fixes feed straight back into the design.",
             deliverables: ["Test Scripts", "Findings Report", "Fix Log"],
           },
           {
@@ -155,7 +155,7 @@ export default async function UiUxPage() {
           },
         ]}
         ctaTitle="Have a product that deserves better UX?"
-        ctaCopy="Tell us where your users get stuck — we'll turn it into a flow they enjoy."
+        ctaCopy="Tell us where your users get stuck, we'll turn it into a flow they enjoy."
         category="UI/UX"
       />
     </main>
